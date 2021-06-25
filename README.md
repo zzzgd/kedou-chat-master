@@ -33,7 +33,8 @@
 [Demo地址](http://kedou.xinsuan.xyz/)
 
 - [x] 增加了最大速度限制. 避免速度太大会炸房, 这个无意中发现, 数字超过一定值就会整个房间卡住几分钟.
-- [x] 有一些可能会被人捣乱的命令, 不会直接在页面上展示了, 输入命令`whosyourdaddy`的话可以展示,`whosyourdaddyoff`关闭.   
+- [x] 有一些可能会被人捣乱的命令, 不会直接在页面上展示了, 输入命令`whosyourdaddy`的话可以展示,`whosyourdaddyoff`关闭.
+- [x] 增加部分表情emoji, 和颜色一样, 只有该页面私服的人可以有效
 - [ ] 其他
 
 
