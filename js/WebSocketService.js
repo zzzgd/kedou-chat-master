@@ -1,8 +1,8 @@
 var WebSocketService = function (model, webSocket) {
     var webSocketService = this;
-    var socketServer=model.settings.socketServer;
-    var fenArrowFlag=true;
-    var fenSpeakFlag=false;
+    var socketServer = model.settings.socketServer;
+    var fenArrowFlag = true;
+    var fenSpeakFlag = false;
     var webSocket = webSocket;
     var webSocket1 = null;
     var webSocket2 = null;
@@ -12,34 +12,34 @@ var WebSocketService = function (model, webSocket) {
     var interval2 = null;
     var interval3 = null;
     var interval4 = null;
-    var len=50;
-    var aroundR=200;
+    var len = 50;
+    var aroundR = 200;
     var model = model;
     var flag = false;
+    var notifyFlag = false;
     var delUserID;
     var dackuser = [];
     var gouserList = [];
     var emojiDict = {
-        "xiao":'0x1F606',
-        "ku":'0x1F62D',
-        'xiaoku':'0x1F602',
-        'liuhan':'0x1F605',
-        'qinqin':'0x1F618',
-        'aixin':'0x1F970',
-        'guilian':'0x1F92A',
-        'kun':'0x1F634',
-        'tu':'0x1F92E',
-        'biti':'0x1F927',
-        'xu':'0x1F92B',
-        'yinchen':'0x1F612',
-        'baiyan':'0x1F644',
-        'kelian':'0x1F97A',
-        'jingle':'0x1F633'
+        "xiao": '0x1F606',
+        "ku": '0x1F62D',
+        'xiaoku': '0x1F602',
+        'liuhan': '0x1F605',
+        'qinqin': '0x1F618',
+        'aixin': '0x1F970',
+        'guilian': '0x1F92A',
+        'kun': '0x1F634',
+        'tu': '0x1F92E',
+        'biti': '0x1F927',
+        'xu': '0x1F92B',
+        'yinchen': '0x1F612',
+        'baiyan': '0x1F644',
+        'kelian': '0x1F97A',
+        'jingle': '0x1F633'
 
     }
 
 
-    
     this.hasConnection = false;
 
     this.welcomeHandler = function (data) {
@@ -58,6 +58,9 @@ var WebSocketService = function (model, webSocket) {
         }
         if ($.cookie("todpole_sex")) {
             webSocketService.sendMessage("我是" + $.cookie("todpole_sex"));
+        }
+        if ($.cookie("todpole_notify")) {
+            notifyFlag = true;
         }
     };
 
@@ -111,9 +114,9 @@ var WebSocketService = function (model, webSocket) {
         tadpole.angle = data.angle;
         tadpole.sex = data.sex;
         tadpole.momentum = data.momentum;
-	tadpole.icon = data.icon;
-        
-	tadpole.timeSinceLastServerUpdate = 0;
+        tadpole.icon = data.icon;
+
+        tadpole.timeSinceLastServerUpdate = 0;
     };
 
     this.messageHandler = function (data) {
@@ -124,7 +127,7 @@ var WebSocketService = function (model, webSocket) {
         let tadpole1 = new Tadpole();
         // console.log(tadpole1.draw());
         tadpole.timeSinceLastServerUpdate = 0;
-        tadpole.messages.push(new Message( transEmoji(data.message)));
+        tadpole.messages.push(new Message(transEmoji(data.message)));
         vmLog.addLog({
             user: tadpole,
             message: {
@@ -136,6 +139,17 @@ var WebSocketService = function (model, webSocket) {
             },
             type: "message",
         });
+        // console.log('data:',data)
+        // console.log('notifyFlag:',notifyFlag)
+        // console.log('model.userTadpole:',model.userTadpole)
+        if (notifyFlag  && data.message.startsWith('@'+model.userTadpole.name+' ')){
+            //通知
+            var msg = data.message
+            if (msg > 100){
+                msg = msg.substring(0,100) + '...'
+            }
+            sendNotify(msg)
+        }
     };
 
     this.closedHandler = function (data) {
@@ -186,20 +200,20 @@ var WebSocketService = function (model, webSocket) {
         if (tadpole.name) {
             sendObj['name'] = tadpole.name;
         }
-        
-        if(fenArrowFlag){
-                if(webSocket1){
-                    createFenshen(webSocket1,1);
-                }
-                if(webSocket2){
-                    createFenshen(webSocket2,2);
-                }
-                if(webSocket3){
-                    createFenshen(webSocket3,3);
-                }
-                if(webSocket4){
-                    createFenshen(webSocket4,4);
-                }
+
+        if (fenArrowFlag) {
+            if (webSocket1) {
+                createFenshen(webSocket1, 1);
+            }
+            if (webSocket2) {
+                createFenshen(webSocket2, 2);
+            }
+            if (webSocket3) {
+                createFenshen(webSocket3, 3);
+            }
+            if (webSocket4) {
+                createFenshen(webSocket4, 4);
+            }
         }
 
         webSocket.send(JSON.stringify(sendObj));
@@ -293,44 +307,46 @@ var WebSocketService = function (model, webSocket) {
             let speed = parseInt(num[1]) > 0 ? parseInt(num[1]) : 1;
             app.speed(speed);
         }
-        
-        regexp = /^开始挂/;;
+
+        regexp = /^开始挂/;
+        ;
         if (regexp.test(msg)) {
             model.userTadpole.targetY = model.userTadpole.x.toFixed(1);
             model.userTadpole.targetX = model.userTadpole.y.toFixed(1);
-            model.userTadpole.targetMomentum=10;
+            model.userTadpole.targetMomentum = 10;
             return;
         }
-        
-        regexp = /^停止挂/;;
+
+        regexp = /^停止挂/;
+        ;
         if (regexp.test(msg)) {
             model.userTadpole.targetY = 0;
             model.userTadpole.targetX = 0;
-            model.userTadpole.targetMomentum=0;
+            model.userTadpole.targetMomentum = 0;
             return;
         }
 
         regexp = /^关介绍$/;
         if (regexp.test(msg)) {
             var inst = document.getElementById('instructions')
-            inst.setAttribute('style','display:none;')
+            inst.setAttribute('style', 'display:none;')
             return;
         }
 
         regexp = /^看介绍$/;
         if (regexp.test(msg)) {
             var inst = document.getElementById('instructions')
-            inst.setAttribute('style','display:show;')
+            inst.setAttribute('style', 'display:show;')
             return;
         }
-        
+
         regexp = /^分身间隔(\d+)$/i;
         if (regexp.test(msg)) {
             let num = msg.match(regexp);
             len = parseInt(num[1]) > 0 ? parseInt(num[1]) : 1;
             return;
         }
-        
+
         regexp = /^分身环绕半径(\d+)$/i;
         if (regexp.test(msg)) {
             let num = msg.match(regexp);
@@ -389,26 +405,26 @@ var WebSocketService = function (model, webSocket) {
         if (regexp.test(msg)) {
             let num = msg.match(regexp)[2];
             let speed = parseInt(num) > 0 ? parseInt(num) : 1;
-            speed = Math.min(1000,speed)
+            speed = Math.min(1000, speed)
             app.speed(speed);
         }
-	
-	regexp = /^(\srgb|rgb)(.+)/i;
+
+        regexp = /^(\srgb|rgb)(.+)/i;
         if (regexp.test(msg)) {
             let userColor = msg.match(regexp)[2];
-	    model.userTadpole.icon = "/images/default.png";    	
-	    model.userTadpole.icon += "?Color=" + userColor;
-	    $.cookie("todpole_Color", userColor, {
+            model.userTadpole.icon = "/images/default.png";
+            model.userTadpole.icon += "?Color=" + userColor;
+            $.cookie("todpole_Color", userColor, {
                 expires: 14,
             });
-	    return;
+            return;
         }
 
         regexp = /^(\sdelcolor|delcolor)$/;
         if (regexp.test(msg)) {
-	   model.userTadpole.icon = "/images/default.png";  
-	   document.cookie = "todpole_Color=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-	   return;
+            model.userTadpole.icon = "/images/default.png";
+            document.cookie = "todpole_Color=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            return;
         }
 
         regexp = /^flicker$/;
@@ -436,93 +452,93 @@ var WebSocketService = function (model, webSocket) {
 
         regexp = /^分身开/;
         if (regexp.test(msg)) {
-            if(!webSocket1){
-                 webSocket1=createFenshen(new WebSocket(socketServer),1);
+            if (!webSocket1) {
+                webSocket1 = createFenshen(new WebSocket(socketServer), 1);
             }
-            if(!webSocket2){
-                 webSocket2=createFenshen(new WebSocket(socketServer),2);
+            if (!webSocket2) {
+                webSocket2 = createFenshen(new WebSocket(socketServer), 2);
             }
-            if(!webSocket3){
-                 webSocket3=createFenshen(new WebSocket(socketServer),3);
+            if (!webSocket3) {
+                webSocket3 = createFenshen(new WebSocket(socketServer), 3);
             }
-            if(!webSocket4){
-                 webSocket4=createFenshen(new WebSocket(socketServer),4);
+            if (!webSocket4) {
+                webSocket4 = createFenshen(new WebSocket(socketServer), 4);
             }
             console.log(webSocket1);
             console.log(webSocket2);
             console.log(webSocket3);
             console.log(webSocket4);
-           return;
+            return;
         }
-        
+
         regexp = /^分身收/;
         if (regexp.test(msg)) {
-            if(webSocket1){
+            if (webSocket1) {
                 webSocket1.close();
-                webSocket1=null;
+                webSocket1 = null;
             }
-            if(webSocket2){
+            if (webSocket2) {
                 webSocket2.close();
-                webSocket2=null;
+                webSocket2 = null;
             }
-            if(webSocket3){
+            if (webSocket3) {
                 webSocket3.close();
-                webSocket3=null;
+                webSocket3 = null;
             }
-            if(webSocket4){
-                webSocket4.close();   
-                webSocket4=null;
+            if (webSocket4) {
+                webSocket4.close();
+                webSocket4 = null;
             }
             return;
         }
-        
-        
+
+
         regexp = /^分身跟/;
         if (regexp.test(msg)) {
-            fenArrowFlag=true;
+            fenArrowFlag = true;
             return;
         }
 
         regexp = /^分身定/;
         if (regexp.test(msg)) {
-            fenArrowFlag=false;
-            
+            fenArrowFlag = false;
+
             clearInterval(interval1);
             clearInterval(interval2);
             clearInterval(interval3);
             clearInterval(interval4);
             return;
         }
-        
+
         regexp = /^分身说/;
         if (regexp.test(msg)) {
-            fenSpeakFlag=true;
+            fenSpeakFlag = true;
             return;
         }
-        
+
         regexp = /^分身禁/;
         if (regexp.test(msg)) {
-            fenSpeakFlag=false;
+            fenSpeakFlag = false;
             return;
         }
-        
+
         regexp = /^分身环绕/;
         if (regexp.test(msg)) {
             let degree1 = 0;
             let degree2 = 90;
             let degree3 = 180;
             let degree4 = 270;
-            if(webSocket1){
-                interval1=aroundFenshen(webSocket1,degree1);
+            if (webSocket1) {
+                interval1 = aroundFenshen(webSocket1, degree1);
             }
-            if(webSocket2){
-                interval2=aroundFenshen(webSocket2,degree2);
+            if (webSocket2) {
+                interval2 = aroundFenshen(webSocket2, degree2);
             }
-            if(webSocket3){
-                interval3=aroundFenshen(webSocket3,degree3);
+            if (webSocket3) {
+                interval3 = aroundFenshen(webSocket3, degree3);
             }
-            if(webSocket4){
-                interval4=aroundFenshen(webSocket4,degree4);
+            if (webSocket4) {
+                interval4 = aroundFenshen(webSocket4, degree4);
             }
             return;
         }
@@ -533,8 +549,8 @@ var WebSocketService = function (model, webSocket) {
         if (regexp.test(msg)) {
             cleanDomBody('hidden-instructions')
             //'分身说、分身禁、分身环绕、分身间隔50、分身环绕半径150'
-            insertTagAndText('hidden-instructions','p','*. 分身功能，包括:分身开、分身收、分身跟、分身定、')
-            insertTagAndText('hidden-instructions','p','分身说、分身禁、分身环绕、分身间隔50、分身环绕半径150')
+            insertTagAndText('hidden-instructions', 'p', '*. 分身功能，包括:分身开、分身收、分身跟、分身定、')
+            insertTagAndText('hidden-instructions', 'p', '分身说、分身禁、分身环绕、分身间隔50、分身环绕半径150')
             return;
         }
 
@@ -544,29 +560,55 @@ var WebSocketService = function (model, webSocket) {
             return;
         }
 
+
+        regexp = /^通知开$/;
+        if (regexp.test(msg)) {
+            notifyFlag = true
+            $.cookie("todpole_notify", true, {
+                expires: 14,
+            });
+            if (window.Notification) { //判断浏览器是否支持Notification
+                Notification.requestPermission().then(permission => { //向浏览器请求允许通知
+                    if (permission == 'granted') {
+                        sendNotify('蝌蚪聊天室-开启消息通知')
+                    }
+                });
+            }
+            return;
+        }
+
+        regexp = /^通知关$/;
+        if (regexp.test(msg)) {
+            $.cookie("todpole_notify", false, {
+                expires: -1,
+            });
+            notifyFlag = false;
+            return;
+        }
+
         var sendObj = {
             type: "message",
             message: msg,
         };
 
         webSocket.send(JSON.stringify(sendObj));
-        
-        if(fenSpeakFlag){
-             if(webSocket1){
-                 webSocket1.send(JSON.stringify(sendObj));
-             }
-             if(webSocket2){
-                 webSocket2.send(JSON.stringify(sendObj));
-             }
-             if(webSocket3){
-                 webSocket3.send(JSON.stringify(sendObj));
-             }
-             if(webSocket4){
-                 webSocket4.send(JSON.stringify(sendObj));
-             }
+
+        if (fenSpeakFlag) {
+            if (webSocket1) {
+                webSocket1.send(JSON.stringify(sendObj));
+            }
+            if (webSocket2) {
+                webSocket2.send(JSON.stringify(sendObj));
+            }
+            if (webSocket3) {
+                webSocket3.send(JSON.stringify(sendObj));
+            }
+            if (webSocket4) {
+                webSocket4.send(JSON.stringify(sendObj));
+            }
         }
 
-       
+
     }
 
     this.authorize = function (token, verifier) {
@@ -637,33 +679,33 @@ var WebSocketService = function (model, webSocket) {
         return null;
     }
 
-    var cleanDomBody = function (elementId){
+    var cleanDomBody = function (elementId) {
         var inst = document.getElementById(elementId)
-        if (inst != null){
+        if (inst != null) {
             console.log(inst)
-            while(inst.hasChildNodes()) //当div下还存在子节点时 循环继续
+            while (inst.hasChildNodes()) //当div下还存在子节点时 循环继续
             {
                 inst.removeChild(inst.firstChild);
             }
         }
     }
 
-    var insertTagAndText = function (parentId,tagName,text){
+    var insertTagAndText = function (parentId, tagName, text) {
         var parent = document.getElementById(parentId)
         var tag = document.createElement(tagName);
-        tag.innerText =text
+        tag.innerText = text
         parent.appendChild(tag)
     }
 
-    var aroundFenshen = function(newWebSocket,degree){
-        var thisWebSocket=null;
-        if(newWebSocket){
-            thisWebSocket=newWebSocket;
-        }else{
-            thisWebSocket=new WebSocket(socketServer);
+    var aroundFenshen = function (newWebSocket, degree) {
+        var thisWebSocket = null;
+        if (newWebSocket) {
+            thisWebSocket = newWebSocket;
+        } else {
+            thisWebSocket = new WebSocket(socketServer);
         }
-        var tadpole=model.userTadpole;
-        return setInterval(function(){
+        var tadpole = model.userTadpole;
+        return setInterval(function () {
             degree += 10;
             let hudu = 2 * Math.PI / 360 * degree;
             let x1 = Number(tadpole.x.toFixed(1)) + Math.sin(hudu) * aroundR;
@@ -681,39 +723,39 @@ var WebSocketService = function (model, webSocket) {
             if (tadpole.name) {
                 sendObj['name'] = tadpole.name;
             }
-            if(thisWebSocket.readyState==1){
+            if (thisWebSocket.readyState == 1) {
                 thisWebSocket.send(JSON.stringify(sendObj));
-            }else{
-                thisWebSocket.onopen=function(event){
+            } else {
+                thisWebSocket.onopen = function (event) {
                     thisWebSocket.send(JSON.stringify(sendObj));
                 }
             }
         }, 50)
     }
 
-    var createFenshen = function(newWebSocket,position){
-        var thisWebSocket=null;
-        if(newWebSocket){
-            thisWebSocket=newWebSocket;
-        }else{
-            thisWebSocket=new WebSocket(socketServer);
+    var createFenshen = function (newWebSocket, position) {
+        var thisWebSocket = null;
+        if (newWebSocket) {
+            thisWebSocket = newWebSocket;
+        } else {
+            thisWebSocket = new WebSocket(socketServer);
         }
-        var tadpole=model.userTadpole;
-        var x=0;
-        var y=0;
+        var tadpole = model.userTadpole;
+        var x = 0;
+        var y = 0;
 
-        if(position==1){
-            x=Number(tadpole.x.toFixed(1))-Number(len);
-            y=Number(tadpole.y.toFixed(1))+Number(len);
-        }else if(position==2){
-            x=Number(tadpole.x.toFixed(1))+Number(len);
-            y=Number(tadpole.y.toFixed(1))+Number(len);
-        }else if(position==3){
-            x=Number(tadpole.x.toFixed(1))-Number(len);
-            y=Number(tadpole.y.toFixed(1))-Number(len);
-        }else if(position==4){
-            x=Number(tadpole.x.toFixed(1))+Number(len);
-            y=Number(tadpole.y.toFixed(1))-Number(len);
+        if (position == 1) {
+            x = Number(tadpole.x.toFixed(1)) - Number(len);
+            y = Number(tadpole.y.toFixed(1)) + Number(len);
+        } else if (position == 2) {
+            x = Number(tadpole.x.toFixed(1)) + Number(len);
+            y = Number(tadpole.y.toFixed(1)) + Number(len);
+        } else if (position == 3) {
+            x = Number(tadpole.x.toFixed(1)) - Number(len);
+            y = Number(tadpole.y.toFixed(1)) - Number(len);
+        } else if (position == 4) {
+            x = Number(tadpole.x.toFixed(1)) + Number(len);
+            y = Number(tadpole.y.toFixed(1)) - Number(len);
         }
 
         var sendObj = {
@@ -726,28 +768,40 @@ var WebSocketService = function (model, webSocket) {
         };
 
         if (tadpole.name) {
-            sendObj['name'] = tadpole.name+position;
+            sendObj['name'] = tadpole.name + position;
         }
 
-        if(thisWebSocket.readyState==1){
+        if (thisWebSocket.readyState == 1) {
             thisWebSocket.send(JSON.stringify(sendObj));
-        }else{
-            thisWebSocket.onopen=function(event){
+        } else {
+            thisWebSocket.onopen = function (event) {
                 thisWebSocket.send(JSON.stringify(sendObj));
             }
         }
         return thisWebSocket;
     }
 
-    var transEmoji = function (content){
-        if (content.startsWith('(') && content.endsWith(')')){
-            var code = content.substring(1,content.length-1)
+    var transEmoji = function (content) {
+        if (content.startsWith('(') && content.endsWith(')')) {
+            var code = content.substring(1, content.length - 1)
             var emoji = emojiDict[code]
-            if (emoji){
-                var aa  = String.fromCodePoint(emoji)
+            if (emoji) {
+                var aa = String.fromCodePoint(emoji)
                 return aa;
             }
         }
         return content;
     }
-};
+
+    var sendNotify = function (msg) {
+        //发起一条新通知
+        var myNotification = new Notification('蝌蚪-新消息通知', {
+            body: msg,
+            // icon: 'static/img/icon_logo.png'
+        });
+        myNotification.onclick = function () {
+            window.focus(); //点击消息通知后回到相应窗口
+            myNotification.close(); //关闭清除通知
+        }
+    }
+}
