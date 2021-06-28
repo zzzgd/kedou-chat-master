@@ -309,7 +309,20 @@ var WebSocketService = function (model, webSocket) {
             model.userTadpole.targetMomentum=0;
             return;
         }
-        
+
+        regexp = /^关介绍$/;
+        if (regexp.test(msg)) {
+            var inst = document.getElementById('instructions')
+            inst.setAttribute('style','display:none;')
+            return;
+        }
+
+        regexp = /^看介绍$/;
+        if (regexp.test(msg)) {
+            var inst = document.getElementById('instructions')
+            inst.setAttribute('style','display:show;')
+            return;
+        }
         
         regexp = /^分身间隔(\d+)$/i;
         if (regexp.test(msg)) {

@@ -4,244 +4,248 @@
 <head>
     <meta charset="utf-8">
     <title>Workerman小蝌蚪互动聊天室 </title>
-    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <link rel="stylesheet" type="text/css" href="css/main.css"/>
     <meta name="viewport"
-        content="width=device-width; initial-scale=1.0; maximum-scale=1.0; minimum-scale=1.0; user-scalable=0;" />
+          content="width=device-width; initial-scale=1.0; maximum-scale=1.0; minimum-scale=1.0; user-scalable=0;"/>
     <meta name="apple-mobile-web-app-capable" content="YES">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
-    <meta property="fb:app_id" content="149260988448984" />
-    <meta name="title" content="Workerman-todpole!" />
-    <meta name="description" content="小蝌蚪交互游戏程序 ，坐标实时推送、实时聊天等" />
-    <link rel="image_src" href="images/fb-image.jpg" />
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png"/>
+    <meta property="fb:app_id" content="149260988448984"/>
+    <meta name="title" content="Workerman-todpole!"/>
+    <meta name="description" content="小蝌蚪交互游戏程序 ，坐标实时推送、实时聊天等"/>
+    <link rel="image_src" href="images/fb-image.jpg"/>
 </head>
 
 <body>
-    <canvas id="canvas"></canvas>
+<canvas id="canvas"></canvas>
 
-    <div id="ui">
-        <div id="fps"></div>
-        <input id="chat" type="text" />
-        <div id="chatText"></div>
-        <!-- <h1>小蝌蚪聊天室</h1> -->
-        <div id="instructions">
-            <h2>介绍</h2>
-            <p>直接打字聊天!，以下各参数前不可有其他内容</p>
-            <p>1.输入 我叫XX 则会设置你的昵称为XX</p>
-            <p>2.输入 我是男生/女生/3 可以设置小蝌蚪为蓝色/粉色/白色</p>
-            <p>3.(仅私服可见)输入 rgb+颜色参数即可设置对应颜色，支持十六进制与rgba</p>
-            <p>如rgb(41,182,216,0.5)或rgb#29F666</p>
-            <p>,输入delcolor删除颜色</p>
-            <p>4.输入速度10 则会调整移动速度为10 初始速度为5</p>
-            <p>5.输入10,10 则可移动到坐标10,10</p>
-            <p>6.使用[ ]包含链接,可在世界动态中点击访问</p>
-            <p>7.(仅私服可见) 使用()包含拼音发送表情,有xiao(笑),ku(哭),xiaoku(笑哭),liuhan(流汗)</p>
-            <p>qinqin(亲亲),aixin(爱心),guilian(鬼脸),kun(困),tu(吐),biti(鼻涕),xu(嘘),yinchen(阴沉)</p>
-            <p>baiyan(白眼),kelian(可怜),(jingle)惊了</p>
-            <div id="hidden-instructions">
+<div id="ui">
+    <div id="fps"></div>
+    <input id="chat" type="text"/>
+    <div id="chatText"></div>
+    <!-- <h1>小蝌蚪聊天室</h1> -->
 
-            </div>
-        </div>
-
-        <div id="dack-users">
-            <div class="dacker">
-                <h3>黑名单</h3>
-                <div @click.stop="toggleDackUsers">{{ showDackUsersText }}</div>
-            </div>
-            <span>被屏蔽：{{ dackCount }}只</span>
-            <div class="users" v-if="showDackUsers">
-                <template v-for="(user,index) in dackUsers">
-                    <div class="user" :key="index">
-                        <div class="name"><span class="name">{{ user.name }}</span>
-                        </div>
-                        <div class="cancel-follow" @click.stop="onClickCancelDack(user)">取消屏蔽</div>
-                    </div>
-                </template>
-            </div>
+    <div id="instructions">
+           <h2>介绍</h2>
+        <p>输入 关介绍 隐藏下面文字,输入 看介绍 恢复</p>
+        <p>直接打字聊天!，以下各参数前不可有其他内容</p>
+        <p>1.输入 我叫XX 则会设置你的昵称为XX</p>
+        <p>2.输入 我是男生/女生/3 可以设置小蝌蚪为蓝色/粉色/白色</p>
+        <p>3.(仅私服可见)输入 rgb+颜色参数即可设置对应颜色，支持十六进制与rgba</p>
+        <p>如rgb(41,182,216,0.5)或rgb#29F666</p>
+        <p>,输入delcolor删除颜色</p>
+        <p>4.输入速度10 则会调整移动速度为10 初始速度为5</p>
+        <p>5.输入10,10 则可移动到坐标10,10</p>
+        <p>6.使用[ ]包含链接,可在世界动态中点击访问</p>
+        <p>7.(仅私服可见) 使用()包含拼音发送表情,有xiao(笑),ku(哭),xiaoku(笑哭),liuhan(流汗)</p>
+        <p>qinqin(亲亲),aixin(爱心),guilian(鬼脸),kun(困),tu(吐),biti(鼻涕),xu(嘘),yinchen(阴沉)</p>
+        <p>baiyan(白眼),kelian(可怜),(jingle)惊了</p>
+        <div id="hidden-instructions">
 
         </div>
+    </div>
 
-        <div id="online-users">
-            <div class="header">
-                <h3>在线列表</h3>
-                <div @click.stop="toggleOnlineUsers">{{ showOnlineUsersText }}</div>
-            </div>
-            <span>在线：{{ onlineCount }}只</span>
-            <div class="users" v-if="showOnlineUsers">
-                <template v-for="(user,index) in onlineUsers">
-                    <div class="user" :key="index">
-                        <div @click.stop="toUserPos(user.user)" class="name"><span title="点击瞬移到玩家身边"
-                                class="name">{{ user.name }}</span><span
-                                class="pos">[{{ user.user.x | parseInt }},{{ user.user.y | parseInt }}]</span>
-                        </div>
-                        <div class="follow" @click.stop="onClickFollowUser(user)"
-                            v-if="followUser==null || user.id !== followUser.id">跟随
-                        </div>
-                        <div class="follow" @click.stop="onClickAroundUser(user)"
-                            v-if="followUser==null || user.id !== followUser.id">环绕
-                        </div>
-                        <div class="cancel-follow" @click.stop="onClickCancelFollow" v-else>取消</div>
-
-                        <div class="follow" @click.stop="onClickDelUser(user)"
-                            v-if="delUser==null || user.id !== delUser.id">屏蔽
-                        </div>
-                        <div class="cancel-follow" @click.stop="onClickCancelDack(user)" v-else>取消屏蔽</div>
-                    </div>
-                </template>
-            </div>
-
+    <div id="dack-users">
+        <div class="dacker">
+            <h3>黑名单</h3>
+            <div @click.stop="toggleDackUsers">{{ showDackUsersText }}</div>
         </div>
-        <div id="world">
-            <div class="header">
-                <h3>世界动态</h3>
-                <div @click.stop="toggleMessages">{{ showText }}</div>
-            </div>
-            <div class="logs" ref="messages" v-if="showMessages">
-                <template v-for="(message,index) in messages">
-                    <div class="message" v-if="message.type === 'message'" :key="index">
-                        <div><span @click.stop="toUserPos(message.user)" title="点击瞬移到玩家身边"
-                                class="name">{{ message.user.name }}</span><span title="点击前往"
-                                @click.stop="deliveryTo(message.message.x,message.message.y)"
-                                class="pos">[{{ message.message.x }},{{ message.message.y }}]</span>:
-                            <span class="content"
-				v-bind:urlFlag="dealWithFlag(message.message.content)">{{ message.message.content }}</span></div>
+        <span>被屏蔽：{{ dackCount }}只</span>
+        <div class="users" v-if="showDackUsers">
+            <template v-for="(user,index) in dackUsers">
+                <div class="user" :key="index">
+                    <div class="name"><span class="name">{{ user.name }}</span>
                     </div>
-                    <div class="connect" v-if="message.type === 'connect'" :key="index">
-                        <span class="name" @click.stop="toUserPos(message.user)">{{ message.user.name }}</span>进入了池塘
-                    </div>
-                    <div class="disconnect" v-if="message.type === 'disconnect'" :key="index">
-                        {{ message.message }}
-                    </div>
-                </template>
-            </div>
-        </div>
-        <aside id="info">
-            <section id="share">
-            </section>
-            <section id="wtf">
-
-                <!-- 尊重他人劳动成果，请保留下面原作者相关链接，否则会导致无法使用 -->
-                <h2>powered&nbsp;by&nbsp;<a rel="external" href="http://workerman.net/workerman-todpole"
-                        target="_blank">workerman</a>
-                </h2>
-                <!-- 尊重他人劳动成果，请保留原作者相关链接，否则会导致无法使用 -->
-
-            </section>
-        </aside>
-        <aside id="frogMode">
-            <h3>Frog Mode</h3>
-            <section id="tadpoles">
-                <h4>Tadpoles</h4>
-                <ul id="tadpoleList">
-                </ul>
-            </section>
-            <section id="console">
-                <h4>Console</h4>
-            </section>
-        </aside>
-
-        <div id="cant-connect">
-            与服务器断开连接了。您可以重新刷新页面。
-        </div>
-        <div id="unsupported-browser">
-            <p>
-                您的浏览器不支持 <a rel="external" href="http://en.wikipedia.org/wiki/WebSocket">WebSockets</a>.
-                推荐您使用以下浏览器
-            </p>
-            <ul>
-                <li><a rel="external" href="http://www.google.com/chrome">Google Chrome</a></li>
-                <li><a rel="external" href="http://apple.com/safari">Safari 4</a></li>
-                <li><a rel="external" href="http://www.mozilla.com/firefox/">Firefox 4</a></li>
-                <li><a rel="external" href="http://www.opera.com/">Opera 11</a></li>
-            </ul>
-            <p>
-                <a href="#" id="force-init-button">仍然浏览!</a>
-            </p>
+                    <div class="cancel-follow" @click.stop="onClickCancelDack(user)">取消屏蔽</div>
+                </div>
+            </template>
         </div>
 
     </div>
 
-    <script src="js/lib/vue-2.6.11.min.js"></script>
-    <script src="js/New.js"></script>
-    <script src="js/lib/parseUri.js"></script>
-    <script src="js/lib/modernizr-1.5.min.js"></script>
-    <script src="js/jquery.min.js"></script>
-    <script src="js/lib/Stats.js"></script>
+    <div id="online-users">
+        <div class="header">
+            <h3>在线列表</h3>
+            <div @click.stop="toggleOnlineUsers">{{ showOnlineUsersText }}</div>
+        </div>
+        <span>在线：{{ onlineCount }}只</span>
+        <div class="users" v-if="showOnlineUsers">
+            <template v-for="(user,index) in onlineUsers">
+                <div class="user" :key="index">
+                    <div @click.stop="toUserPos(user.user)" class="name"><span title="点击瞬移到玩家身边"
+                                                                               class="name">{{ user.name }}</span><span
+                            class="pos">[{{ user.user.x | parseInt }},{{ user.user.y | parseInt }}]</span>
+                    </div>
+                    <div class="follow" @click.stop="onClickFollowUser(user)"
+                         v-if="followUser==null || user.id !== followUser.id">跟随
+                    </div>
+                    <div class="follow" @click.stop="onClickAroundUser(user)"
+                         v-if="followUser==null || user.id !== followUser.id">环绕
+                    </div>
+                    <div class="cancel-follow" @click.stop="onClickCancelFollow" v-else>取消</div>
 
-    <script src="js/App.js"></script>
-    <script src="js/Model.js"></script>
-    <script src="js/Settings.js"></script>
-    <script src="js/Keys.js"></script>
-    <script src="js/WebSocketService.js"></script>
-    <script src="js/Camera.js"></script>
+                    <div class="follow" @click.stop="onClickDelUser(user)"
+                         v-if="delUser==null || user.id !== delUser.id">屏蔽
+                    </div>
+                    <div class="cancel-follow" @click.stop="onClickCancelDack(user)" v-else>取消屏蔽</div>
+                </div>
+            </template>
+        </div>
 
-    <script src="js/Tadpole.js"></script>
-    <script src="js/TadpoleTail.js"></script>
+    </div>
+    <div id="world">
+        <div class="header">
+            <h3>世界动态</h3>
+            <div @click.stop="toggleMessages">{{ showText }}</div>
+        </div>
+        <div class="logs" ref="messages" v-if="showMessages">
+            <template v-for="(message,index) in messages">
+                <div class="message" v-if="message.type === 'message'" :key="index">
+                    <div><span @click.stop="toUserPos(message.user)" title="点击瞬移到玩家身边"
+                               class="name">{{ message.user.name }}</span><span title="点击前往"
+                                                                                @click.stop="deliveryTo(message.message.x,message.message.y)"
+                                                                                class="pos">[{{ message.message.x }},{{ message.message.y }}]</span>:
+                        <span class="content"
+                              v-bind:urlFlag="dealWithFlag(message.message.content)">{{ message.message.content }}</span></div>
+                </div>
+                <div class="connect" v-if="message.type === 'connect'" :key="index">
+                    <span class="name" @click.stop="toUserPos(message.user)">{{ message.user.name }}</span>进入了池塘
+                </div>
+                <div class="disconnect" v-if="message.type === 'disconnect'" :key="index">
+                    {{ message.message }}
+                </div>
+            </template>
+        </div>
+    </div>
+    <aside id="info">
+        <section id="share">
+        </section>
+        <section id="wtf">
 
-    <script src="js/Message.js"></script>
-    <script src="js/WaterParticle.js"></script>
-    <script src="js/Arrow.js"></script>
-    <script src="js/formControls.js"></script>
+            <!-- 尊重他人劳动成果，请保留下面原作者相关链接，否则会导致无法使用 -->
+            <h2>powered&nbsp;by&nbsp;<a rel="external" href="http://workerman.net/workerman-todpole"
+                                        target="_blank">workerman</a>
+            </h2>
+            <!-- 尊重他人劳动成果，请保留原作者相关链接，否则会导致无法使用 -->
 
-    <script src="js/Cookie.js"></script>
-    <script src="js/main.js"></script>
-    <script type="text/javascript">
+        </section>
+    </aside>
+    <aside id="frogMode">
+        <h3>Frog Mode</h3>
+        <section id="tadpoles">
+            <h4>Tadpoles</h4>
+            <ul id="tadpoleList">
+            </ul>
+        </section>
+        <section id="console">
+            <h4>Console</h4>
+        </section>
+    </aside>
+
+    <div id="cant-connect">
+        与服务器断开连接了。您可以重新刷新页面。
+    </div>
+    <div id="unsupported-browser">
+        <p>
+            您的浏览器不支持 <a rel="external" href="http://en.wikipedia.org/wiki/WebSocket">WebSockets</a>.
+            推荐您使用以下浏览器
+        </p>
+        <ul>
+            <li><a rel="external" href="http://www.google.com/chrome">Google Chrome</a></li>
+            <li><a rel="external" href="http://apple.com/safari">Safari 4</a></li>
+            <li><a rel="external" href="http://www.mozilla.com/firefox/">Firefox 4</a></li>
+            <li><a rel="external" href="http://www.opera.com/">Opera 11</a></li>
+        </ul>
+        <p>
+            <a href="#" id="force-init-button">仍然浏览!</a>
+        </p>
+    </div>
+
+</div>
+
+<script src="js/lib/vue-2.6.11.min.js"></script>
+<script src="js/New.js"></script>
+<script src="js/lib/parseUri.js"></script>
+<script src="js/lib/modernizr-1.5.min.js"></script>
+<script src="js/jquery.min.js"></script>
+<script src="js/lib/Stats.js"></script>
+
+<script src="js/App.js"></script>
+<script src="js/Model.js"></script>
+<script src="js/Settings.js"></script>
+<script src="js/Keys.js"></script>
+<script src="js/WebSocketService.js"></script>
+<script src="js/Camera.js"></script>
+
+<script src="js/Tadpole.js"></script>
+<script src="js/TadpoleTail.js"></script>
+
+<script src="js/Message.js"></script>
+<script src="js/WaterParticle.js"></script>
+<script src="js/Arrow.js"></script>
+<script src="js/formControls.js"></script>
+
+<script src="js/Cookie.js"></script>
+<script src="js/main.js"></script>
+<script src="js/lib/jquery.fileupload.js"></script>
+
+<script type="text/javascript">
     $("#world").bind("DOMNodeInserted", function (e) {
-			$(".logs .message .content[urlFlag='1']").each(function () {
-				var text = $(this).html();
-				if (text.indexOf("[") != -1 && text.indexOf("]") != -1) {
-					text = replaceUrl(text);
-					$(this).attr('urlFlag', '0');
-					$(this).html(text);
-				}
-			});
-		})
+        $(".logs .message .content[urlFlag='1']").each(function () {
+            var text = $(this).html();
+            if (text.indexOf("[") != -1 && text.indexOf("]") != -1) {
+                text = replaceUrl(text);
+                $(this).attr('urlFlag', '0');
+                $(this).html(text);
+            }
+        });
+    })
 
 
-		function replaceUrl(text) {
-			if (text.indexOf("[") != -1 && text.indexOf("]") != -1) {
-				var address = text.substring(text.indexOf("[") + 1, text.indexOf("]"));
-				if (!address.startsWith('http')){
-				    alert('23')
-				    address = 'http://' + address;
-                }
-				address = '</b><a href="' + address + '" target="_blank"><b>' + address + '</b></a>';
-				var replaceOld = text.substring(text.indexOf("["), text.indexOf("]") + 1);
-				text = text.replace(replaceOld, address);
-			}
-			return text;
-		}
+    function replaceUrl(text) {
+        if (text.indexOf("[") != -1 && text.indexOf("]") != -1) {
+            var address = text.substring(text.indexOf("[") + 1, text.indexOf("]"));
+            if (!address.startsWith('http')) {
+                alert('23')
+                address = 'http://' + address;
+            }
+            address = '</b><a href="' + address + '" target="_blank"><b>' + address + '</b></a>';
+            var replaceOld = text.substring(text.indexOf("["), text.indexOf("]") + 1);
+            text = text.replace(replaceOld, address);
+        }
+        return text;
+    }
 
 
-		$("#world").bind("DOMNodeInserted", function (e) {
-			$(".logs .message .content[urlFlag='1']").each(function () {
-				var text = $(this).html();
-				if (text.indexOf("[") != -1 && text.indexOf("]") != -1) {
-					text = replaceUrl(text);
-					$(this).attr('urlFlag', '0');
-					$(this).html(text);
-				}
-			});
-		})
+    $("#world").bind("DOMNodeInserted", function (e) {
+        $(".logs .message .content[urlFlag='1']").each(function () {
+            var text = $(this).html();
+            if (text.indexOf("[") != -1 && text.indexOf("]") != -1) {
+                text = replaceUrl(text);
+                $(this).attr('urlFlag', '0');
+                $(this).html(text);
+            }
+        });
+    })
 
 
+    function replaceUrl2(text) {
+        if (text.indexOf("[") != -1 && text.indexOf("]") != -1) {
+            text = text.replace('[', '');
+            text = text.replace(']', '');
+        }
+        return text;
+    }
 
-		function replaceUrl2(text) {
-			if (text.indexOf("[") != -1 && text.indexOf("]") != -1) {
-				text = text.replace('[', '');
-				text = text.replace(']', '');
-			}
-			return text;
-		}
+    function dealWithFlag(content) {
+        if (content.indexOf("[") != -1 && content.indexOf("]") != -1) {
+            return '1';
+        } else {
+            return '0';
+        }
+    }
 
-		function dealWithFlag(content) {
-			if (content.indexOf("[") != -1 && content.indexOf("]") != -1) {
-				return '1';
-			} else {
-				return '0';
-			}
-		}
-    </script>
+</script>
 
 </body>
 
