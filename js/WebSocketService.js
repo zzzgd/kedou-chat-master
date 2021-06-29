@@ -139,10 +139,10 @@ var WebSocketService = function (model, webSocket) {
             },
             type: "message",
         });
-        // console.log('data:',data)
-        // console.log('notifyFlag:',notifyFlag)
-        // console.log('model.userTadpole:',model.userTadpole)
-        if (notifyFlag  && data.message.startsWith('@'+model.userTadpole.name+' ')){
+        console.log('data:',data)
+        console.log('notifyFlag:',notifyFlag)
+        console.log('model.userTadpole:',model.userTadpole)
+        if (notifyFlag  && data.message.startsWith('@'+model.userTadpole.name.trim()+' ')){
             //通知
             var msg = data.message
             if (msg > 100){
