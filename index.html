@@ -210,7 +210,6 @@
         if (text.indexOf("[") != -1 && text.indexOf("]") != -1) {
             var address = text.substring(text.indexOf("[") + 1, text.indexOf("]"));
             if (!address.startsWith('http')) {
-                alert('23')
                 address = 'http://' + address;
             }
             address = '</b><a href="' + address + '" target="_blank"><b>' + address + '</b></a>';
