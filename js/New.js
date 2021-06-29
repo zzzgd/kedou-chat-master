@@ -171,7 +171,7 @@ let vmLog = new Vue({
         },
         onClickAroundUser(user) {
             this.type = 'around';
-            this.followUser = user.name;
+            this.followUser = user;
         },
         setCircleRadius(r) {
             this.circleRadius = r;
