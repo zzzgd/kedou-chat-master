@@ -78,6 +78,8 @@
                                                                                class="name">{{ user.name }}</span><span
                             class="pos">[{{ user.user.x | parseInt }},{{ user.user.y | parseInt }}]</span>
                     </div>
+                    <div class="follow" @click.stop="onClickAiteUser(user)">@他
+                    </div>
                     <div class="follow" @click.stop="onClickFollowUser(user)"
                          v-if="followUser==null || user.id !== followUser.id">跟随
                     </div>

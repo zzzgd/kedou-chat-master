@@ -16,6 +16,7 @@ let vmLog = new Vue({
         delUser: null,
         type: null,
         circleRadius: 100,
+        aiteName: null,
         // CancelDack: null,
     },
     filters: {
@@ -84,6 +85,13 @@ let vmLog = new Vue({
                     this.followInterval = null;
                 }
             }
+        },
+        aiteName(name){
+            if (this.aiteName !== null){
+                $("#chat").val('@'+this.aiteName+' ')
+                $("#chat").keyup()
+                this.aiteName = null
+            }
         }
     },
     computed: {
@@ -140,6 +148,9 @@ let vmLog = new Vue({
             this.followUser = user;
             // console.log(user)
         },
+        onClickAiteUser(user) {
+            this.aiteName = user.name
+        },
         onClickCancelFollow() {
             this.followUser = null;
             clearInterval(this.followInterval);
@@ -160,7 +171,7 @@ let vmLog = new Vue({
         },
         onClickAroundUser(user) {
             this.type = 'around';
-            this.followUser = user;
+            this.followUser = user.name;
         },
         setCircleRadius(r) {
             this.circleRadius = r;
