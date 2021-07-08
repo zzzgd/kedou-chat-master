@@ -69,9 +69,9 @@
 		input.keyup(function(e) {
 
 			var k = e.keyCode;
-			if(input.val().length >= 45)
+			if(input.val().length >= 500)
 			{
-				input.val(input.val().substr(0,45));
+				input.val(input.val().substr(0,500));
 			}
 
 			if(input.val().length > 0) {
@@ -82,7 +82,7 @@
 				closechat();
 			}
 			if(!hidden) {
-				if(k == keys.esc || k == keys.enter || (k == keys.space && input.val().length > 35)) {
+				if(k == keys.esc || k == keys.enter ) {
 					if(k != keys.esc && input.val().length > 0) {
 					    	messageHistory.push(input.val());
 			    			messagePointer = messageHistory.length;

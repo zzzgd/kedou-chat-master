@@ -38,10 +38,12 @@
         <p>5.输入 10,10 则可移动到坐标10,10</p>
         <p>6.使用[ ]包含链接,可在世界动态中点击访问</p>
         <p>7.(仅私服可见) 使用()包含拼音发送表情,有xiao(笑),ku(哭),xiaoku(笑哭),liuhan(流汗)</p>
-        <p>qinqin(亲亲),aixin(爱心),guilian(鬼脸),kun(困),tu(吐),biti(鼻涕),xu(嘘),yinchen(阴沉)</p>
-        <p>baiyan(白眼),kelian(可怜),(jingle)惊了</p>
-        <p>8.(仅私服,电脑浏览器可用) 输入 通知开 开启接收信息弹窗, 输入 通知关 关闭, 开启后可以接收其他人的艾特信息, 艾特格式: @名字+空格+信息 </p>
-        <p>9.输入 闪烁 和 闪烁关 来实现闪烁, 输入闪烁(颜色1+中划线+颜色2)还可自定义闪烁颜色(仅私服可见),如 闪烁(#FFF123-#123123)</p>
+        <p>  qinqin(亲亲),aixin(爱心),guilian(鬼脸),kun(困),tu(吐),biti(鼻涕),xu(嘘),</p>
+        <p>  yinchen(阴沉),baiyan(白眼),kelian(可怜),(jingle)惊了</p>
+        <p>8.(仅私服,电脑浏览器可用) 输入 通知开 开启接收信息弹窗, 输入 通知关 关闭,</p>
+        <p>  开启后可以接收其他人的艾特信息, 艾特格式: @名字+空格+信息</p>
+        <p>9.输入 闪烁 和 闪烁关 来实现闪烁, 输入闪烁(颜色1+中划线+颜色2)</p>
+        <p>  还可自定义闪烁颜色(仅私服可见),如 闪烁(#FFF123-#123123)</p>
         <div id="hidden-instructions">
 
         </div>
@@ -77,6 +79,8 @@
                     <div @click.stop="toUserPos(user.user)" class="name"><span title="点击瞬移到玩家身边"
                                                                                class="name">{{ user.name }}</span><span
                             class="pos">[{{ user.user.x | parseInt }},{{ user.user.y | parseInt }}]</span>
+                    </div>
+                    <div class="follow" @click.stop="onClickAiteUser(user)">@他
                     </div>
                     <div class="follow" @click.stop="onClickFollowUser(user)"
                          v-if="followUser==null || user.id !== followUser.id">跟随
@@ -208,7 +212,6 @@
         if (text.indexOf("[") != -1 && text.indexOf("]") != -1) {
             var address = text.substring(text.indexOf("[") + 1, text.indexOf("]"));
             if (!address.startsWith('http')) {
-                alert('23')
                 address = 'http://' + address;
             }
             address = '</b><a href="' + address + '" target="_blank"><b>' + address + '</b></a>';
