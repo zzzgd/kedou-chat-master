@@ -20,6 +20,9 @@ var WebSocketService = function (model, webSocket) {
     var delUserID;
     var dackuser = [];
     var gouserList = [];
+    var flashInterval = null;
+    var flashCacheIcon = null
+    var flashCacheSex = null
     var emojiDict = {
         "xiao": '0x1F606',
         "ku": '0x1F62D',
@@ -142,11 +145,11 @@ var WebSocketService = function (model, webSocket) {
         // console.log('data:',data)
         // console.log('notifyFlag:',notifyFlag)
         // console.log('model.userTadpole:',model.userTadpole)
-        if (notifyFlag  && data.message.startsWith('@'+model.userTadpole.name+' ')){
+        if (notifyFlag && data.message.startsWith('@' + model.userTadpole.name + ' ')) {
             //通知
             var msg = data.message
-            if (msg > 100){
-                msg = msg.substring(0,100) + '...'
+            if (msg > 100) {
+                msg = msg.substring(0, 100) + '...'
             }
             sendNotify(msg)
         }
@@ -195,6 +198,7 @@ var WebSocketService = function (model, webSocket) {
             angle: tadpole.angle.toFixed(3),
             momentum: tadpole.momentum.toFixed(3),
             sex: tadpole.sex,
+            icon: tadpole.icon
         };
 
         if (tadpole.name) {
@@ -229,7 +233,7 @@ var WebSocketService = function (model, webSocket) {
             return;
         }
 
-        regexp = /^(\s我是|我是|sex)(男生|女生|0|1|3|男|女)/;
+        regexp = /^(\s我是|我是|sex)(男生|女生|-1|0|1|3|男|女)/;
         if (regexp.test(msg)) {
             let sex = msg.match(regexp)[2];
             if (sex === "女生" || sex === "0") {
@@ -427,26 +431,46 @@ var WebSocketService = function (model, webSocket) {
             return;
         }
 
-        regexp = /^flicker$/;
+        regexp = /^闪烁$/;
         if (regexp.test(msg)) {
-            let sex = model.userTadpole.sex;
-            let interval = setInterval(() => {
-                if (model.userTadpole.sex === -1) {
-                    model.userTadpole.sex = 1;
-                }
-                model.userTadpole.sex = model.userTadpole.sex ^ 1;
+            if (flashInterval) {
+                return;
+            }
+            let color1 = '#0000FF'
+            let color2 = '#FF0000'
+            this.flashColor(color1, color2)
+            return;
+        }
+
+        regexp = /^闪烁\((#\d{6})-(#\d{6})\)$/;
+        if (regexp.test(msg)) {
+            if (flashInterval) {
+                return;
+            }
+            let color1 = msg.match(regexp)[1];
+            let color2 = msg.match(regexp)[2];
+            console.log(color1)
+            console.log(color2)
+            this.flashColor(color1, color2)
+            return;
+        }
+
+        regexp = /^闪烁关$/;
+        if (regexp.test(msg)) {
+            clearInterval(flashInterval);
+            if (flashCacheIcon) {
+                model.userTadpole.icon = flashCacheIcon;
+                $.cookie("todpole_Color", model.userTadpole.icon, {
+                    expires: 14,
+                });
+            }
+            if (flashCacheSex) {
+                model.userTadpole.sex = flashCacheSex;
                 $.cookie("todpole_sex", model.userTadpole.sex, {
                     expires: 14,
                 });
-                this.sendUpdate(model.userTadpole);
-            }, 500);
-            setTimeout(function () {
-                clearInterval(interval);
-                model.userTadpole.sex = sex;
-                $.cookie("todpole_sex", model.userTadpole.sex, {
-                    expires: 14,
-                });
-            }, 60000);
+            }
+            flashInterval = null;
             return;
         }
 
@@ -608,8 +632,31 @@ var WebSocketService = function (model, webSocket) {
             }
         }
 
-
     }
+    this.flashColor = function (color1, color2) {
+        flashCacheIcon = model.userTadpole.icon
+        flashCacheSex = model.userTadpole.sex;
+
+        flashInterval = setInterval(() => {
+            //红黄
+            if (model.userTadpole.icon === '/images/default.png?Color=' + color1) {
+                model.userTadpole.icon = '/images/default.png?Color=' + color2;
+            } else {
+                model.userTadpole.icon = '/images/default.png?Color=' + color1;
+            }
+
+            //如果是原版, 切换性别
+            if (model.userTadpole.sex === -1) {
+                model.userTadpole.sex = 1;
+            }
+            model.userTadpole.sex = model.userTadpole.sex ^ 1;
+            console.log(model.userTadpole.sex)
+            console.log(model.userTadpole.icon)
+            this.sendUpdate(model.userTadpole);
+        }, 500);
+
+        this.sendUpdate(model.userTadpole);
+    };
 
     this.authorize = function (token, verifier) {
         var sendObj = {
@@ -717,7 +764,8 @@ var WebSocketService = function (model, webSocket) {
                 y: y1,
                 angle: tadpole.angle.toFixed(3),
                 momentum: tadpole.momentum.toFixed(3),
-                sex: tadpole.sex
+                sex: tadpole.sex,
+                icon: tadpole.icon
             };
 
             if (tadpole.name) {
@@ -764,7 +812,8 @@ var WebSocketService = function (model, webSocket) {
             y: y,
             angle: tadpole.angle.toFixed(3),
             momentum: tadpole.momentum.toFixed(3),
-            sex: tadpole.sex
+            sex: tadpole.sex,
+            icon: tadpole.icon
         };
 
         if (tadpole.name) {
