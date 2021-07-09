@@ -466,9 +466,9 @@ var WebSocketService = function (model, webSocket) {
             }
             if (flashCacheSex) {
                 model.userTadpole.sex = flashCacheSex;
-                $.cookie("todpole_sex", model.userTadpole.sex, {
-                    expires: 14,
-                });
+                // $.cookie("todpole_sex", model.userTadpole.sex, {
+                //     expires: 14,
+                // });
             }
             flashInterval = null;
             return;
@@ -646,10 +646,11 @@ var WebSocketService = function (model, webSocket) {
             }
 
             //如果是原版, 切换性别
-            if (model.userTadpole.sex === -1) {
+            if (model.userTadpole.sex === 0) {
                 model.userTadpole.sex = 1;
+            }else{
+                model.userTadpole.sex = 0;
             }
-            model.userTadpole.sex = model.userTadpole.sex ^ 1;
             console.log(model.userTadpole.sex)
             console.log(model.userTadpole.icon)
             this.sendUpdate(model.userTadpole);
