@@ -460,9 +460,9 @@ var WebSocketService = function (model, webSocket) {
             clearInterval(flashInterval);
             if (flashCacheIcon) {
                 model.userTadpole.icon = flashCacheIcon;
-                $.cookie("todpole_Color", model.userTadpole.icon, {
-                    expires: 14,
-                });
+                // $.cookie("todpole_Color", model.userTadpole.icon, {
+                //     expires: 14,
+                // });
             }
             if (flashCacheSex) {
                 model.userTadpole.sex = flashCacheSex;
