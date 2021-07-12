@@ -442,7 +442,7 @@ var WebSocketService = function (model, webSocket) {
             return;
         }
 
-        regexp = /^闪烁\((#[0-9fF]{6})-(#[0-9fF]{6})\)$/;
+        regexp = /^闪烁\((#[0-9A-Fa-f]{6})-(#[0-9A-Fa-f]{6})\)$/;
         if (regexp.test(msg)) {
             if (flashInterval) {
                 return;
