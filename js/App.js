@@ -122,6 +122,8 @@ var App = function (aSettings, aCanvas) {
             model.userTadpole.momentum = model.userTadpole.targetMomentum = model.userTadpole.maxMomentum;
         }
 
+        model.userTadpole.targetY = 0;
+        model.userTadpole.targetX = 0;
 
     };
 
@@ -156,6 +158,8 @@ var App = function (aSettings, aCanvas) {
         }
     };
     app.keyup = function (e) {
+        model.userTadpole.targetY = 0;
+        model.userTadpole.targetX = 0;
         if (e.keyCode == keys.up || e.keyCode == keys.down) {
             keyNav.y = 0;
             if (keyNav.x == 0 && keyNav.y == 0) {
@@ -189,6 +193,8 @@ var App = function (aSettings, aCanvas) {
         if (model.userTadpole) {
             model.userTadpole.targetMomentum = 0;
         }
+        model.userTadpole.targetY = 0;
+        model.userTadpole.targetX = 0;
     }
     app.touchmove = function (e) {
         e.preventDefault();

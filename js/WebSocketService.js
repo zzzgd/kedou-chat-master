@@ -313,7 +313,6 @@ var WebSocketService = function (model, webSocket) {
         }
 
         regexp = /^开始挂/;
-        ;
         if (regexp.test(msg)) {
             model.userTadpole.targetY = model.userTadpole.x.toFixed(1);
             model.userTadpole.targetX = model.userTadpole.y.toFixed(1);
@@ -322,7 +321,6 @@ var WebSocketService = function (model, webSocket) {
         }
 
         regexp = /^停止挂/;
-        ;
         if (regexp.test(msg)) {
             model.userTadpole.targetY = 0;
             model.userTadpole.targetX = 0;
