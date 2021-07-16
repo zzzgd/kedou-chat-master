@@ -55,6 +55,8 @@ var WebSocketService = function (model, webSocket) {
         $("#chat").initChat();
         if ($.cookie("todpole_name")) {
             webSocketService.sendMessage("name:" + $.cookie("todpole_name"));
+        } else {
+            webSocketService.sendMessage("name:迷路蝌蚪" + getNow());
         }
         if ($.cookie("todpole_Color")) {
             webSocketService.sendMessage("rgb" + $.cookie("todpole_Color"));
@@ -646,7 +648,7 @@ var WebSocketService = function (model, webSocket) {
             //如果是原版, 切换性别
             if (model.userTadpole.sex === 0) {
                 model.userTadpole.sex = 1;
-            }else{
+            } else {
                 model.userTadpole.sex = 0;
             }
             console.log(model.userTadpole.sex)
@@ -851,5 +853,17 @@ var WebSocketService = function (model, webSocket) {
             window.focus(); //点击消息通知后回到相应窗口
             myNotification.close(); //关闭清除通知
         }
+    }
+
+    var getNow = function () {
+        //时间戳转换方法    date:时间戳数字
+        var date = new Date();
+        var YY = date.getFullYear().toString().substring(2) ;
+        var MM = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) ;
+        var DD = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate());
+        var hh = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) ;
+        var mm = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) ;
+        var ss = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
+        return YY + MM + DD + hh + mm + ss;
     }
 }
