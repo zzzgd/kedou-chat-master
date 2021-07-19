@@ -132,11 +132,11 @@ var WebSocketService = function (model, webSocket) {
         let tadpole1 = new Tadpole();
         // console.log(tadpole1.draw());
         tadpole.timeSinceLastServerUpdate = 0;
-        tadpole.messages.push(new Message(transEmoji(data.message)));
+        tadpole.messages.push(new Message(handleMsg(data.message)));
         vmLog.addLog({
             user: tadpole,
             message: {
-                content: transEmoji(data.message),
+                content: handleMsg(data.message),
                 // content: String.fromCodePoint('0x1f601'),
                 time: new Date(),
                 x: parseInt(tadpole.x),
@@ -584,6 +584,12 @@ var WebSocketService = function (model, webSocket) {
             return;
         }
 
+        regexp = /^\[(.+)]$/;
+        if (regexp.test(msg)) {
+            let address = msg.match(regexp)[1];
+            console.log(address)
+            msg = '[' + btoa(encodeURIComponent(address)) + ']';
+        }
 
         regexp = /^通知开$/;
         if (regexp.test(msg)) {
@@ -614,7 +620,6 @@ var WebSocketService = function (model, webSocket) {
             type: "message",
             message: msg,
         };
-
         webSocket.send(JSON.stringify(sendObj));
 
         if (fenSpeakFlag) {
@@ -831,6 +836,15 @@ var WebSocketService = function (model, webSocket) {
         return thisWebSocket;
     }
 
+    var handleMsg = function (content) {
+        console.log(content)
+        content = transEmoji(content)
+        console.log(content)
+        content = parseUrl(content)
+        console.log(content)
+        return content;
+    }
+
     var transEmoji = function (content) {
         if (content.startsWith('(') && content.endsWith(')')) {
             var code = content.substring(1, content.length - 1)
@@ -841,6 +855,28 @@ var WebSocketService = function (model, webSocket) {
             }
         }
         return content;
+    }
+
+    var parseUrl = function (text) {
+        console.log(text)
+        if (text.startsWith("[") && text.endsWith("]")) {
+            console.log('1231')
+            let urlcode = text.substring(1, text.length - 1)
+            console.log(urlcode)
+            let url = urlcode;
+            try {
+                let decodestr = atob(urlcode)
+                if (btoa(decodestr) === urlcode) {
+                    //    说明是base64
+                    url = decodeURIComponent(decodestr)
+                }
+            } catch
+                (e) {
+                console.error(e)
+            }
+            text = '[' + url + ']';
+        }
+        return text;
     }
 
     var sendNotify = function (msg) {
@@ -858,11 +894,11 @@ var WebSocketService = function (model, webSocket) {
     var getNow = function () {
         //时间戳转换方法    date:时间戳数字
         var date = new Date();
-        var YY = date.getFullYear().toString().substring(2) ;
-        var MM = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) ;
+        var YY = date.getFullYear().toString().substring(2);
+        var MM = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1);
         var DD = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate());
-        var hh = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) ;
-        var mm = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) ;
+        var hh = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours());
+        var mm = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes());
         var ss = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
         return YY + MM + DD + hh + mm + ss;
     }

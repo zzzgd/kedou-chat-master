@@ -222,17 +222,6 @@
     }
 
 
-    $("#world").bind("DOMNodeInserted", function (e) {
-        $(".logs .message .content[urlFlag='1']").each(function () {
-            var text = $(this).html();
-            if (text.indexOf("[") != -1 && text.indexOf("]") != -1) {
-                text = replaceUrl(text);
-                $(this).attr('urlFlag', '0');
-                $(this).html(text);
-            }
-        });
-    })
-
 
     function replaceUrl2(text) {
         if (text.indexOf("[") != -1 && text.indexOf("]") != -1) {
