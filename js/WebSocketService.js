@@ -54,9 +54,9 @@ var WebSocketService = function (model, webSocket) {
 
         $("#chat").initChat();
         if ($.cookie("todpole_name")) {
-            webSocketService.sendMessage("name:" + $.cookie("todpole_name"));
+            changeName($.cookie("todpole_name"))
         } else {
-            webSocketService.sendMessage("name:迷路蝌蚪" + getNow());
+            changeName("name:迷路蝌蚪" + getNow());
         }
         if ($.cookie("todpole_Color")) {
             webSocketService.sendMessage("rgb" + $.cookie("todpole_Color"));
@@ -228,10 +228,9 @@ var WebSocketService = function (model, webSocket) {
     this.sendMessage = function (msg) {
         let regexp = /^(\s我叫|name[:：;；]|我叫)(.+)/i;
         if (regexp.test(msg)) {
-            model.userTadpole.name = msg.match(regexp)[2];
-            $.cookie("todpole_name", model.userTadpole.name, {
-                expires: 14,
-            });
+            let name = msg.match(regexp)[2];
+            sendmsg(model.userTadpole.name + ' 改名为:【'+ name+'】')
+            changeName(name)
             return;
         }
 
@@ -616,11 +615,8 @@ var WebSocketService = function (model, webSocket) {
             return;
         }
 
-        var sendObj = {
-            type: "message",
-            message: msg,
-        };
-        webSocket.send(JSON.stringify(sendObj));
+        //发送消息
+        sendmsg(msg);
 
         if (fenSpeakFlag) {
             if (webSocket1) {
@@ -713,6 +709,7 @@ var WebSocketService = function (model, webSocket) {
         return null;
     };
 
+
     var queryByName = function (name) {
         var x;
         var y;
@@ -730,6 +727,21 @@ var WebSocketService = function (model, webSocket) {
         }
 
         return null;
+    }
+
+    var sendmsg = function (msg){
+        var sendObj = {
+            type: "message",
+            message: msg,
+        };
+        webSocket.send(JSON.stringify(sendObj));
+    }
+
+    var changeName = function (name){
+        model.userTadpole.name = name;
+        $.cookie("todpole_name", model.userTadpole.name, {
+            expires: 14,
+        });
     }
 
     var cleanDomBody = function (elementId) {
