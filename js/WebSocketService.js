@@ -623,6 +623,10 @@ var WebSocketService = function (model, webSocket) {
         sendmsg(msg);
 
         if (fenSpeakFlag) {
+            let sendObj = {
+                type: "message",
+                message: msg,
+            };
             if (webSocket1) {
                 webSocket1.send(JSON.stringify(sendObj));
             }
