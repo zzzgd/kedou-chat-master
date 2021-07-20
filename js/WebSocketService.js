@@ -587,7 +587,11 @@ var WebSocketService = function (model, webSocket) {
         if (regexp.test(msg)) {
             let address = msg.match(regexp)[1];
             console.log(address)
-            msg = '[' + btoa(encodeURIComponent(address)) + ']';
+            // let base64str = btoa(encodeURIComponent(address));
+            // let uu = base64str.split("").join('#')
+            let uu = btoa(escape(address))
+            msg = '[' + uu + ']';
+            console.log(msg)
         }
 
         regexp = /^通知开$/;
@@ -734,6 +738,7 @@ var WebSocketService = function (model, webSocket) {
             type: "message",
             message: msg,
         };
+        console.log('json: '+JSON.stringify(sendObj))
         webSocket.send(JSON.stringify(sendObj));
     }
 
@@ -872,20 +877,21 @@ var WebSocketService = function (model, webSocket) {
     var parseUrl = function (text) {
         console.log(text)
         if (text.startsWith("[") && text.endsWith("]")) {
-            console.log('1231')
             let urlcode = text.substring(1, text.length - 1)
             console.log(urlcode)
             let url = urlcode;
-            try {
-                let decodestr = atob(urlcode)
-                if (btoa(decodestr) === urlcode) {
-                    //    说明是base64
-                    url = decodeURIComponent(decodestr)
-                }
-            } catch
-                (e) {
-                console.error(e)
-            }
+            // try {
+            //     urlcode = urlcode.replaceAll('#','')
+            //     let decodestr = atob(urlcode)
+            //     if (btoa(decodestr) === urlcode) {
+            //         //    说明是base64
+            //         url = decodeURIComponent(atob(decodestr))
+            //     }
+            // } catch
+            //     (e) {
+            //     console.error(e)
+            // }
+            url = unescape(atob(url))
             text = '[' + url + ']';
         }
         return text;
