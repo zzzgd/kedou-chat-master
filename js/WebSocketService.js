@@ -56,7 +56,7 @@ var WebSocketService = function (model, webSocket) {
         if ($.cookie("todpole_name")) {
             changeName($.cookie("todpole_name"))
         } else {
-            changeName("name:迷路蝌蚪" + getNow());
+            changeName("迷路蝌蚪" + getNow());
         }
         if ($.cookie("todpole_Color")) {
             webSocketService.sendMessage("rgb" + $.cookie("todpole_Color"));
@@ -573,7 +573,9 @@ var WebSocketService = function (model, webSocket) {
             cleanDomBody('hidden-instructions')
             //'分身说、分身禁、分身环绕、分身间隔50、分身环绕半径150'
             insertTagAndText('hidden-instructions', 'p', '*. 分身功能，包括:分身开、分身收、分身跟、分身定、')
-            insertTagAndText('hidden-instructions', 'p', '分身说、分身禁、分身环绕、分身间隔50、分身环绕半径150')
+            insertTagAndText('hidden-instructions', 'p', '&nbsp;&nbsp;分身说、分身禁、分身环绕、分身间隔50、分身环绕半径150')
+            insertTagAndText('hidden-instructions', 'p', '*. 输入 闪烁 和 闪烁关 来实现闪烁, 输入闪烁(颜色1+中划线+颜色2)')
+            insertTagAndText('hidden-instructions', 'p', '&nbsp;&nbsp;还可自定义闪烁颜色(仅私服可见),如 闪烁(#FFF123-#123123)')
             return;
         }
 
@@ -767,7 +769,7 @@ var WebSocketService = function (model, webSocket) {
     var insertTagAndText = function (parentId, tagName, text) {
         var parent = document.getElementById(parentId)
         var tag = document.createElement(tagName);
-        tag.innerText = text
+        tag.innerHTML = text
         parent.appendChild(tag)
     }
 
