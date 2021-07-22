@@ -109,10 +109,12 @@ var WebSocketService = function (model, webSocket) {
             tadpole.x = data.x;
             tadpole.y = data.y;
             vmLog.updateUsers(model.tadpoles);
-            vmLog.addLog({
-                type: "connect",
-                user: tadpole,
-            });
+            if (!pauseMsg) {
+                vmLog.addLog({
+                    type: "connect",
+                    user: tadpole,
+                });
+            }
         } else {
             tadpole.targetX = data.x;
             tadpole.targetY = data.y;
@@ -169,10 +171,12 @@ var WebSocketService = function (model, webSocket) {
 
     this.closedHandler = function (data) {
         if (model.tadpoles[data.id]) {
-            vmLog.addLog({
-                type: "disconnect",
-                message: model.tadpoles[data.id].name + "离开了池塘",
-            });
+            if (!pauseMsg) {
+                vmLog.addLog({
+                    type: "disconnect",
+                    message: model.tadpoles[data.id].name + "离开了池塘",
+                });
+            }
             delete model.tadpoles[data.id];
             delete model.arrows[data.id];
             vmLog.updateUsers(model.tadpoles);
@@ -625,8 +629,8 @@ var WebSocketService = function (model, webSocket) {
                 type: "message",
             };
             vmLog.addLog(log)
-            console.log('length: '+storageMsg.size())
-            while (storageMsg.size()>0){
+            console.log('length: ' + storageMsg.size())
+            while (storageMsg.size() > 0) {
                 let d = storageMsg.pop()
                 console.log(d)
                 vmLog.addLog(d)
