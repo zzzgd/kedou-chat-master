@@ -1,15 +1,16 @@
 // 以构造函数的方式来实现  ,也可使用 class 来实现
-var LinkedQueue = function () {
+var LinkedQueue = function (maxLen) {
     // 定义一个节点结构
-    let Node = function(ele) {
+    this.maxLen = maxLen;
+    let Node = function (ele) {
         this.ele = ele;
         this.next = null;
     }
     let length = 0, front, rear;
     // 队尾添加操作
-    this.push = function(ele) {
+    this.push = function (ele) {
         let node = new Node(ele);
-        if(length === 0) {
+        if (length === 0) {
             front = node;
         } else {
             let temp = rear;
@@ -17,10 +18,14 @@ var LinkedQueue = function () {
         }
         rear = node;
         length++;
+        if (length > maxLen) {
+            console.log('超过length,pop:'+length)
+            this.pop()
+        }
         return true;
     }
     // 队首删除操作
-    this.pop = function() {
+    this.pop = function () {
         let temp = front;
         front = front.next;
         length--;
@@ -28,29 +33,29 @@ var LinkedQueue = function () {
         return temp.ele;
     }
     // 队列大小
-    this.size = function() {
+    this.size = function () {
         return length;
     }
     // 获取头元素
-    this.getFront = function() {
+    this.getFront = function () {
         return front;
     }
     // 获取尾元素
-    this.getRear = function() {
+    this.getRear = function () {
         return rear;
     }
     // 读取队列元素 toString
-    this.toString = function() {
+    this.toString = function () {
         let str = '', temp = front;
-        while(temp) {
-            console.log(JSON.stringify(temp.ele))
+        while (temp) {
+            // console.log(JSON.stringify(temp.ele))
             str = str + JSON.stringify(temp.ele) + ' ';
             temp = temp.next;
         }
         return str;
     }
     // 清空队列
-    this.clear = function() {
+    this.clear = function () {
         front = null;
         rear = null;
         length = 0;

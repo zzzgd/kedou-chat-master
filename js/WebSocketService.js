@@ -18,7 +18,7 @@ var WebSocketService = function (model, webSocket) {
     var flag = false;
     var notifyFlag = false;
     var pauseMsg = false;
-    var storageMsg = new LinkedQueue()
+    var storageMsg = new LinkedQueue(500)
     var delUserID;
     var dackuser = [];
     var gouserList = [];
