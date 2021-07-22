@@ -17,6 +17,8 @@ var WebSocketService = function (model, webSocket) {
     var model = model;
     var flag = false;
     var notifyFlag = false;
+    var pauseMsg = false;
+    var storageMsg = new LinkedQueue()
     var delUserID;
     var dackuser = [];
     var gouserList = [];
@@ -133,7 +135,8 @@ var WebSocketService = function (model, webSocket) {
         // console.log(tadpole1.draw());
         tadpole.timeSinceLastServerUpdate = 0;
         tadpole.messages.push(new Message(handleMsg(data.message)));
-        vmLog.addLog({
+
+        let log = {
             user: tadpole,
             message: {
                 content: handleMsg(data.message),
@@ -143,10 +146,17 @@ var WebSocketService = function (model, webSocket) {
                 y: parseInt(tadpole.y),
             },
             type: "message",
-        });
-        // console.log('data:',data)
-        // console.log('notifyFlag:',notifyFlag)
-        // console.log('model.userTadpole:',model.userTadpole)
+        };
+
+        if (pauseMsg) {
+            storageMsg.push(log);
+        } else {
+            vmLog.addLog(log);
+        }
+
+
+        console.log('data:', data)
+        console.log('model.userTadpole:', model.userTadpole)
         if (notifyFlag && data.message.startsWith('@' + model.userTadpole.name + ' ')) {
             //通知
             var msg = data.message
@@ -229,7 +239,7 @@ var WebSocketService = function (model, webSocket) {
         let regexp = /^(\s我叫|name[:：;；]|我叫)(.+)/i;
         if (regexp.test(msg)) {
             let name = msg.match(regexp)[2];
-            sendmsg(model.userTadpole.name + ' 改名为:【'+ name+'】')
+            sendmsg(model.userTadpole.name + ' 改名为:【' + name + '】')
             changeName(name)
             return;
         }
@@ -596,6 +606,47 @@ var WebSocketService = function (model, webSocket) {
             console.log(msg)
         }
 
+        regexp = /^暂停$/;
+        if (regexp.test(msg)) {
+            pauseMsg = true;
+            return;
+        }
+        regexp = /^暂停关$/;
+        if (regexp.test(msg)) {
+            let log = {
+                user: model.userTadpole,
+                message: {
+                    content: handleMsg('----恢复消息----'),
+                    // content: String.fromCodePoint('0x1f601'),
+                    time: new Date(),
+                    x: parseInt(model.userTadpole.x),
+                    y: parseInt(model.userTadpole.y),
+                },
+                type: "message",
+            };
+            vmLog.addLog(log)
+            console.log('length: '+storageMsg.size())
+            while (storageMsg.size()>0){
+                let d = storageMsg.pop()
+                console.log(d)
+                vmLog.addLog(d)
+            }
+            let log2 = {
+                user: model.userTadpole,
+                message: {
+                    content: handleMsg('----恢复消息完毕----'),
+                    // content: String.fromCodePoint('0x1f601'),
+                    time: new Date(),
+                    x: parseInt(model.userTadpole.x),
+                    y: parseInt(model.userTadpole.y),
+                },
+                type: "message",
+            };
+            vmLog.addLog(log2)
+            pauseMsg = false;
+            return;
+        }
+
         regexp = /^通知开$/;
         if (regexp.test(msg)) {
             notifyFlag = true
@@ -739,16 +790,16 @@ var WebSocketService = function (model, webSocket) {
         return null;
     }
 
-    var sendmsg = function (msg){
+    var sendmsg = function (msg) {
         var sendObj = {
             type: "message",
             message: msg,
         };
-        console.log('json: '+JSON.stringify(sendObj))
+        console.log('json: ' + JSON.stringify(sendObj))
         webSocket.send(JSON.stringify(sendObj));
     }
 
-    var changeName = function (name){
+    var changeName = function (name) {
         model.userTadpole.name = name;
         $.cookie("todpole_name", model.userTadpole.name, {
             expires: 14,
@@ -860,11 +911,11 @@ var WebSocketService = function (model, webSocket) {
     }
 
     var handleMsg = function (content) {
-        console.log(content)
+        // console.log(content)
         content = transEmoji(content)
-        console.log(content)
+        // console.log(content)
         content = parseUrl(content)
-        console.log(content)
+        // console.log(content)
         return content;
     }
 
@@ -881,7 +932,7 @@ var WebSocketService = function (model, webSocket) {
     }
 
     var parseUrl = function (text) {
-        console.log(text)
+        // console.log(text)
         if (text.startsWith("[") && text.endsWith("]")) {
             let urlcode = text.substring(1, text.length - 1)
             console.log(urlcode)
