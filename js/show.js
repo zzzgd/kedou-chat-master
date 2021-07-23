@@ -28,6 +28,7 @@ window.onload = function(){
     if (isMobile()) {
         cleanDomBody('more-instructions')
         cleanDomBody('online-users')
+        cleanDomBody('tongji')
         var parent = document.getElementById('more-instructions')
         var a = document.createElement('a');
         a.setAttribute("href","https://zzzgd.info/archives/ke-dou-liao-tian-shi-zi-ji-zeng-jia-le-dian-gong-neng");
