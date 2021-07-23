@@ -810,23 +810,7 @@ var WebSocketService = function (model, webSocket) {
         });
     }
 
-    var cleanDomBody = function (elementId) {
-        var inst = document.getElementById(elementId)
-        if (inst != null) {
-            console.log(inst)
-            while (inst.hasChildNodes()) //当div下还存在子节点时 循环继续
-            {
-                inst.removeChild(inst.firstChild);
-            }
-        }
-    }
 
-    var insertTagAndText = function (parentId, tagName, text) {
-        var parent = document.getElementById(parentId)
-        var tag = document.createElement(tagName);
-        tag.innerHTML = text
-        parent.appendChild(tag)
-    }
 
     var aroundFenshen = function (newWebSocket, degree) {
         var thisWebSocket = null;

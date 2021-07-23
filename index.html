@@ -26,26 +26,29 @@
     <!-- <h1>小蝌蚪聊天室</h1> -->
 
     <div id="instructions">
-           <h2>介绍</h2>
+        <h2>介绍</h2>
         <p>输入 关介绍 隐藏下面文字,输入 看介绍 恢复</p>
         <p>直接打字聊天!，以下各参数前不可有其他内容</p>
         <p>1.输入 我叫XX 则会设置你的昵称为XX</p>
         <p>2.输入 我是男生/女生/3 可以设置小蝌蚪为蓝色/粉色/白色</p>
-        <p>3.(仅私服可见)输入 rgb+颜色参数即可设置对应颜色，支持十六进制与rgba</p>
-        <p>&nbsp;&nbsp;如rgb(41,182,216,0.5)或rgb#29F666</p>
-        <p>&nbsp;&nbsp;,输入 delcolor 删除颜色</p>
-        <p>4.输入 速度10 则会调整移动速度为10 初始速度为5</p>
-        <p>5.输入 10,10 则可移动到坐标10,10</p>
-        <p>6.使用[ ]包含链接,可在世界动态中点击访问</p>
-        <p>7.(仅私服可见) 使用()包含拼音发送表情,有xiao(笑),ku(哭),xiaoku(笑哭),liuhan(流汗)</p>
-        <p>&nbsp;&nbsp;qinqin(亲亲),aixin(爱心),guilian(鬼脸),kun(困),tu(吐),biti(鼻涕),xu(嘘),</p>
-        <p>&nbsp;&nbsp;yinchen(阴沉),baiyan(白眼),kelian(可怜),(jingle)惊了</p>
-        <p>8.(仅私服,电脑浏览器可用) 输入 通知开 开启接收信息弹窗, 输入 通知关 关闭,</p>
-        <p>&nbsp;&nbsp;开启后可以接收其他人的艾特信息, 艾特格式: @名字+空格+信息</p>
-        <p>9.输入 暂停 可以暂停刷新世界动态,方便看历史记录,输入 暂停关 恢复</p>
-        <div id="hidden-instructions">
+        <div id="more-instructions">
+            <p>3.(仅私服可见)输入 rgb+颜色参数即可设置对应颜色，支持十六进制与rgba</p>
+            <p>&nbsp;&nbsp;如rgb(41,182,216,0.5)或rgb#29F666</p>
+            <p>&nbsp;&nbsp;,输入 delcolor 删除颜色</p>
+            <p>4.输入 速度10 则会调整移动速度为10 初始速度为5</p>
+            <p>5.输入 10,10 则可移动到坐标10,10</p>
+            <p>6.使用[ ]包含链接,可在世界动态中点击访问</p>
+            <p>7.(仅私服可见) 使用()包含拼音发送表情,有xiao(笑),ku(哭),xiaoku(笑哭),liuhan(流汗)</p>
+            <p>&nbsp;&nbsp;qinqin(亲亲),aixin(爱心),guilian(鬼脸),kun(困),tu(吐),biti(鼻涕),xu(嘘),</p>
+            <p>&nbsp;&nbsp;yinchen(阴沉),baiyan(白眼),kelian(可怜),(jingle)惊了</p>
+            <p>8.(仅私服,电脑浏览器可用) 输入 通知开 开启接收信息弹窗, 输入 通知关 关闭,</p>
+            <p>&nbsp;&nbsp;开启后可以接收其他人的艾特信息, 艾特格式: @名字+空格+信息</p>
+            <p>9.输入 暂停 可以暂停刷新世界动态,方便看历史记录,输入 暂停关 恢复</p>
+            <div id="hidden-instructions">
 
+            </div>
         </div>
+
     </div>
 
     <div id="dack-users">
@@ -176,6 +179,7 @@
 <script src="js/jquery.min.js"></script>
 <script src="js/lib/Stats.js"></script>
 
+<script src="js/show.js"></script>
 <script src="js/App.js"></script>
 <script src="js/Model.js"></script>
 <script src="js/Settings.js"></script>
@@ -221,7 +225,6 @@
         }
         return text;
     }
-
 
 
     function replaceUrl2(text) {
