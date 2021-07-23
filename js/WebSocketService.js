@@ -25,6 +25,7 @@ var WebSocketService = function (model, webSocket) {
     var flashInterval = null;
     var flashCacheIcon = null
     var flashCacheSex = null
+    var connectTime = null
     var emojiDict = {
         "xiao": '0x1F606',
         "ku": '0x1F62D',
@@ -69,6 +70,7 @@ var WebSocketService = function (model, webSocket) {
         if ($.cookie("todpole_notify")) {
             notifyFlag = true;
         }
+        connectTime = new Date();
     };
 
     this.updateHandler = function (data) {
@@ -133,6 +135,8 @@ var WebSocketService = function (model, webSocket) {
         if (!tadpole) {
             return;
         }
+
+        console.log('data:', data)
         let tadpole1 = new Tadpole();
         // console.log(tadpole1.draw());
         tadpole.timeSinceLastServerUpdate = 0;
@@ -157,7 +161,6 @@ var WebSocketService = function (model, webSocket) {
         }
 
 
-        console.log('data:', data)
         console.log('model.userTadpole:', model.userTadpole)
         if (notifyFlag && data.message.startsWith('@' + model.userTadpole.name + ' ')) {
             //通知
@@ -208,7 +211,6 @@ var WebSocketService = function (model, webSocket) {
     this.sendUpdate = function (tadpole) {
         var sendObj = {
             type: "update",
-            icon: tadpole.icon,
             x: tadpole.x.toFixed(1),
             y: tadpole.y.toFixed(1),
             angle: tadpole.angle.toFixed(3),
@@ -407,6 +409,17 @@ var WebSocketService = function (model, webSocket) {
         regexp = /^stop circle$/;
         if (regexp.test(msg)) {
             clearInterval(circleInterval);
+            return;
+        }
+
+        regexp = /^时长$/
+        if (regexp.test(msg)) {
+            if (!connectTime) {
+                connectTime = new Date();
+            }
+            let time = getTimeInterval(new Date()/1000 - connectTime/1000)
+            msg = '【系统】已持续在线'+time;
+            sendmsg(msg,'update')
             return;
         }
 
@@ -794,14 +807,19 @@ var WebSocketService = function (model, webSocket) {
         return null;
     }
 
-    var sendmsg = function (msg) {
+    var sendmsg = function (msg,type) {
+        if (!type){
+            type = 'message';
+        }
         var sendObj = {
-            type: "message",
+            type: type,
             message: msg,
         };
         console.log('json: ' + JSON.stringify(sendObj))
         webSocket.send(JSON.stringify(sendObj));
     }
+
+
 
     var changeName = function (name) {
         model.userTadpole.name = name;
@@ -809,7 +827,6 @@ var WebSocketService = function (model, webSocket) {
             expires: 14,
         });
     }
-
 
 
     var aroundFenshen = function (newWebSocket, degree) {
@@ -964,5 +981,32 @@ var WebSocketService = function (model, webSocket) {
         var mm = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes());
         var ss = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
         return YY + MM + DD + hh + mm + ss;
+    }
+
+    var getTimeInterval = function (second_time) {
+        console.log('秒:'+second_time)
+        var time = parseInt(second_time) + "秒";
+        if (parseInt(second_time) > 60) {
+
+            var second = parseInt(second_time) % 60;
+            var min = parseInt(second_time / 60);
+            time = min + "分" + second + "秒";
+
+            if (min > 60) {
+                min = parseInt(second_time / 60) % 60;
+                var hour = parseInt(parseInt(second_time / 60) / 60);
+                time = hour + "小时" + min + "分" + second + "秒";
+
+                if (hour > 24) {
+                    hour = parseInt(parseInt(second_time / 60) / 60) % 24;
+                    var day = parseInt(parseInt(parseInt(second_time / 60) / 60) / 24);
+                    time = day + "天" + hour + "小时" + min + "分" + second + "秒";
+                }
+            }
+
+
+        }
+
+        return time;
     }
 }
