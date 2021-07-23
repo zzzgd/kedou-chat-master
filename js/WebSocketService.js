@@ -419,7 +419,7 @@ var WebSocketService = function (model, webSocket) {
             }
             let time = getTimeInterval(new Date()/1000 - connectTime/1000)
             msg = '【系统】已持续在线'+time;
-            sendmsg(msg,'update')
+            sendmsg(msg)
             return;
         }
 
