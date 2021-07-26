@@ -355,6 +355,7 @@ var WebSocketService = function (model, webSocket) {
             $.cookie("todpole_attention", specialAttentionUser, {
                 expires: 14,
             });
+            sendNotify('您已关注【'+specialAttentionUser+'】的上线提醒')
             return;
         }
 
