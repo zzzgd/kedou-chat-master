@@ -26,6 +26,7 @@ var WebSocketService = function (model, webSocket) {
     var flashCacheIcon = null
     var flashCacheSex = null
     var connectTime = null
+    var specialAttentionUser = null
     var emojiDict = {
         "xiao": '0x1F606',
         "ku": '0x1F62D',
@@ -116,6 +117,10 @@ var WebSocketService = function (model, webSocket) {
                     type: "connect",
                     user: tadpole,
                 });
+            }
+            if (notifyFlag && specialAttentionUser){
+                console.log('111:'+specialAttentionUser)
+                sendNotify(specialAttentionUser+' 已上线')
             }
         } else {
             tadpole.targetX = data.x;
@@ -329,7 +334,7 @@ var WebSocketService = function (model, webSocket) {
             app.speed(speed);
         }
 
-        regexp = /^开始挂/;
+        regexp = /^开始挂$/;
         if (regexp.test(msg)) {
             model.userTadpole.targetY = model.userTadpole.x.toFixed(1);
             model.userTadpole.targetX = model.userTadpole.y.toFixed(1);
@@ -337,11 +342,29 @@ var WebSocketService = function (model, webSocket) {
             return;
         }
 
-        regexp = /^停止挂/;
+        regexp = /^停止挂$/;
         if (regexp.test(msg)) {
             model.userTadpole.targetY = 0;
             model.userTadpole.targetX = 0;
             model.userTadpole.targetMomentum = 0;
+            return;
+        }
+        regexp = /^关注\[(.+)]$/;
+        if (regexp.test(msg)) {
+            specialAttentionUser = msg.match(regexp)[1]
+            console.log(specialAttentionUser)
+            $.cookie("todpole_attention", specialAttentionUser, {
+                expires: 14,
+            });
+            return;
+        }
+
+        regexp = /^不再关注$/;
+        if (regexp.test(msg)) {
+            specialAttentionUser = null;
+            $.cookie("todpole_attention", null, {
+                expires: -1,
+            });
             return;
         }
 
@@ -500,7 +523,7 @@ var WebSocketService = function (model, webSocket) {
             return;
         }
 
-        regexp = /^分身开/;
+        regexp = /^分身开$/;
         if (regexp.test(msg)) {
             if (!webSocket1) {
                 webSocket1 = createFenshen(new WebSocket(socketServer), 1);
@@ -521,7 +544,7 @@ var WebSocketService = function (model, webSocket) {
             return;
         }
 
-        regexp = /^分身收/;
+        regexp = /^分身收$/;
         if (regexp.test(msg)) {
             if (webSocket1) {
                 webSocket1.close();
@@ -543,13 +566,13 @@ var WebSocketService = function (model, webSocket) {
         }
 
 
-        regexp = /^分身跟/;
+        regexp = /^分身跟$/;
         if (regexp.test(msg)) {
             fenArrowFlag = true;
             return;
         }
 
-        regexp = /^分身定/;
+        regexp = /^分身定$/;
         if (regexp.test(msg)) {
             fenArrowFlag = false;
 
@@ -560,19 +583,19 @@ var WebSocketService = function (model, webSocket) {
             return;
         }
 
-        regexp = /^分身说/;
+        regexp = /^分身说$/;
         if (regexp.test(msg)) {
             fenSpeakFlag = true;
             return;
         }
 
-        regexp = /^分身禁/;
+        regexp = /^分身禁$/;
         if (regexp.test(msg)) {
             fenSpeakFlag = false;
             return;
         }
 
-        regexp = /^分身环绕/;
+        regexp = /^分身环绕$/;
         if (regexp.test(msg)) {
             let degree1 = 0;
             let degree2 = 90;
