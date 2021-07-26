@@ -118,8 +118,7 @@ var WebSocketService = function (model, webSocket) {
                     user: tadpole,
                 });
             }
-            if (notifyFlag && specialAttentionUser){
-                console.log('111:'+specialAttentionUser)
+            if (notifyFlag && specialAttentionUser === tadpole.name){
                 sendNotify(specialAttentionUser+' 已上线')
             }
         } else {
