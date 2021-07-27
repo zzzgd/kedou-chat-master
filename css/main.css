@@ -254,12 +254,13 @@ a#force-init-button:hover {
     left: 0;
     bottom: 0;
     width: 100%;
+    height: 40px;
     background: rgba(0, 0, 0, 0.2);
 }
 
 #info section {
     float: left;
-    margin: 20px 40px 20px 20px;
+    #margin: 20px 40px 20px 20px;
     margin-right: 40px;
 }
 
@@ -310,8 +311,8 @@ a#force-init-button:hover {
     padding: 10px;
     width: 300px;
     position: absolute;
-    bottom: 30px;
-    right: 60px;
+    bottom: 40px;
+    right: 5px;
     color: white;
     z-index: 100;
     background: rgba(0, 0, 0, .3);
@@ -386,16 +387,21 @@ a#force-init-button:hover {
 #online-users, #dack-users {
     border-radius: 10px;
     padding: 10px;
-    width: 25vw;
+    width: 250px;
     position: absolute;
-    left: 60px;
+    left: 10px;
     color: white;
     z-index: 99;
     background: rgba(0, 0, 0, .3);
 }
 
 #online-users {
-    bottom: 30px;
+    bottom: 40px;
+}
+
+#info-content{
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 #dack-users {
