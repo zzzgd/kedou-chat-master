@@ -71,6 +71,9 @@ var WebSocketService = function (model, webSocket) {
         if ($.cookie("todpole_notify")) {
             notifyFlag = true;
         }
+        if ($.cookie("close_introduction")) {
+            watchIntroduction(false);
+        }
         connectTime = new Date();
     };
 
@@ -118,8 +121,8 @@ var WebSocketService = function (model, webSocket) {
                     user: tadpole,
                 });
             }
-            if (notifyFlag && specialAttentionUser === tadpole.name){
-                sendNotify(specialAttentionUser+' 已上线')
+            if (notifyFlag && specialAttentionUser === tadpole.name) {
+                sendNotify(specialAttentionUser + ' 已上线')
             }
         } else {
             tadpole.targetX = data.x;
@@ -245,6 +248,7 @@ var WebSocketService = function (model, webSocket) {
         webSocket.send(JSON.stringify(sendObj));
     };
 
+
     this.sendMessage = function (msg) {
         let regexp = /^(\s我叫|name[:：;；]|我叫)(.+)/i;
         if (regexp.test(msg)) {
@@ -355,7 +359,7 @@ var WebSocketService = function (model, webSocket) {
             $.cookie("todpole_attention", specialAttentionUser, {
                 expires: 14,
             });
-            sendNotify('您已关注【'+specialAttentionUser+'】的上线提醒')
+            sendNotify('您已关注【' + specialAttentionUser + '】的上线提醒')
             return;
         }
 
@@ -370,15 +374,19 @@ var WebSocketService = function (model, webSocket) {
 
         regexp = /^关介绍$/;
         if (regexp.test(msg)) {
-            var inst = document.getElementById('instructions')
-            inst.setAttribute('style', 'display:none;')
+            watchIntroduction(false);
+            $.cookie("close_introduction", true, {
+                expires: 14,
+            });
             return;
         }
 
         regexp = /^看介绍$/;
         if (regexp.test(msg)) {
-            var inst = document.getElementById('instructions')
-            inst.setAttribute('style', 'display:show;')
+            watchIntroduction(true);
+            $.cookie("close_introduction", false, {
+                expires: -1,
+            });
             return;
         }
 
@@ -440,8 +448,8 @@ var WebSocketService = function (model, webSocket) {
             if (!connectTime) {
                 connectTime = new Date();
             }
-            let time = getTimeInterval(new Date()/1000 - connectTime/1000)
-            msg = '【系统】已持续在线'+time;
+            let time = getTimeInterval(new Date() / 1000 - connectTime / 1000)
+            msg = '【系统】已持续在线' + time;
             sendmsg(msg)
             return;
         }
@@ -830,8 +838,8 @@ var WebSocketService = function (model, webSocket) {
         return null;
     }
 
-    var sendmsg = function (msg,type) {
-        if (!type){
+    var sendmsg = function (msg, type) {
+        if (!type) {
             type = 'message';
         }
         var sendObj = {
@@ -843,12 +851,16 @@ var WebSocketService = function (model, webSocket) {
     }
 
 
-
     var changeName = function (name) {
         model.userTadpole.name = name;
         $.cookie("todpole_name", model.userTadpole.name, {
             expires: 14,
         });
+    }
+
+    var watchIntroduction = function (boo) {
+        var inst = document.getElementById('instructions')
+        inst.setAttribute('style', boo ? 'display:show;' : 'display:none;')
     }
 
 
@@ -1007,7 +1019,7 @@ var WebSocketService = function (model, webSocket) {
     }
 
     var getTimeInterval = function (second_time) {
-        console.log('秒:'+second_time)
+        console.log('秒:' + second_time)
         var time = parseInt(second_time) + "秒";
         if (parseInt(second_time) > 60) {
 
