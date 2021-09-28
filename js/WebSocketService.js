@@ -3,6 +3,8 @@ var WebSocketService = function (model, webSocket) {
     var socketServer = model.settings.socketServer;
     var fenArrowFlag = true;
     var fenSpeakFlag = false;
+    var fanyiTo = null;
+    var fanyiFrom = null;
     var webSocket = webSocket;
     var webSocket1 = null;
     var webSocket2 = null;
@@ -147,12 +149,13 @@ var WebSocketService = function (model, webSocket) {
         let tadpole1 = new Tadpole();
         // console.log(tadpole1.draw());
         tadpole.timeSinceLastServerUpdate = 0;
-        tadpole.messages.push(new Message(handleMsg(data.message)));
+        data.message = handleMsg(data.message)
+        tadpole.messages.push(new Message(data.message));
 
         let log = {
             user: tadpole,
             message: {
-                content: handleMsg(data.message),
+                content: data.message,
                 // content: String.fromCodePoint('0x1f601'),
                 time: new Date(),
                 x: parseInt(tadpole.x),
@@ -597,6 +600,26 @@ var WebSocketService = function (model, webSocket) {
             return;
         }
 
+        regexp = /^翻译-([a-z]+)$/;
+        if (regexp.test(msg)) {
+            fanyiTo = msg.match(regexp)[1];
+            return;
+        }
+
+        regexp = /^解译[-]?([a-z]+)?$/;
+        if (regexp.test(msg)) {
+            fanyiFrom = msg.match(regexp)[1] || 'auto';
+            alert(fanyiFrom)
+            return;
+        }
+
+        regexp = /^翻译off$/;
+        if (regexp.test(msg)) {
+            fanyiTo = null;
+            fanyiFrom = null;
+            return;
+        }
+
         regexp = /^分身禁$/;
         if (regexp.test(msg)) {
             fenSpeakFlag = false;
@@ -718,6 +741,10 @@ var WebSocketService = function (model, webSocket) {
             });
             notifyFlag = false;
             return;
+        }
+
+        if (fanyiTo) {
+            msg = getfanyi(null, fanyiTo, msg)
         }
 
         //发送消息
@@ -956,6 +983,7 @@ var WebSocketService = function (model, webSocket) {
         // console.log(content)
         content = parseUrl(content)
         // console.log(content)
+        content = transfer2CN(content)
         return content;
     }
 
@@ -990,6 +1018,13 @@ var WebSocketService = function (model, webSocket) {
             // }
             url = unescape(atob(url))
             text = '[' + url + ']';
+        }
+        return text;
+    }
+
+    var transfer2CN = function (text) {
+        if (fanyiFrom) {
+            return getfanyi(fanyiFrom, "zh", text)
         }
         return text;
     }
@@ -1043,5 +1078,22 @@ var WebSocketService = function (model, webSocket) {
         }
 
         return time;
+    }
+
+
+    var getfanyi = function (from, to, message) {
+        let msg = message;
+        $.ajaxSettings.async = false;
+        $.post("http://localhost:8080/demo/fanyi2", {query: message, from: from, to: to},
+            function (data, textStatus) {
+                console.log(data)
+                if (textStatus == "success" && data.code == 0) {
+                    msg = data.msg;
+                    return;
+                }
+            });
+        $.ajaxSettings.async = true;
+        console.log('msg-=>', msg)
+        return msg;
     }
 }
