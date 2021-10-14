@@ -333,12 +333,12 @@ var WebSocketService = function (model, webSocket) {
             return;
         }
 
-        regexp = /^速度(\d+)$/i;
-        if (regexp.test(msg)) {
-            let num = msg.match(regexp);
-            let speed = parseInt(num[1]) > 0 ? parseInt(num[1]) : 1;
-            app.speed(speed);
-        }
+        // regexp = /^速度(\d+)$/i;
+        // if (regexp.test(msg)) {
+        //     let num = msg.match(regexp);
+        //     let speed = parseInt(num[1]) > 0 ? parseInt(num[1]) : 1;
+        //     app.speed(speed);
+        // }
 
         regexp = /^开始挂$/;
         if (regexp.test(msg)) {
@@ -469,7 +469,7 @@ var WebSocketService = function (model, webSocket) {
         if (regexp.test(msg)) {
             let num = msg.match(regexp)[2];
             let speed = parseInt(num) > 0 ? parseInt(num) : 1;
-            speed = Math.min(1000, speed)
+            speed = Math.min(30, speed)
             app.speed(speed);
         }
 
@@ -552,6 +552,10 @@ var WebSocketService = function (model, webSocket) {
             console.log(webSocket2);
             console.log(webSocket3);
             console.log(webSocket4);
+            //定时关闭
+            setTimeout(function (){
+                app.sendMessage('分身收')
+            },10000)
             return;
         }
 
