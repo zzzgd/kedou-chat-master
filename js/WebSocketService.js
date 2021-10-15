@@ -303,7 +303,7 @@ var WebSocketService = function (model, webSocket) {
                 gouserList.push(gousergo);
                 // console.log(gouserList);
 
-            }, 10);
+            }, 500);
 
             return;
         }
@@ -436,7 +436,7 @@ var WebSocketService = function (model, webSocket) {
                 let y1 = y0 - Math.cos(hudu) * r;
                 model.userTadpole.x = x1;
                 model.userTadpole.y = y1;
-            }, 50);
+            }, 300);
             return;
         }
 
@@ -929,7 +929,7 @@ var WebSocketService = function (model, webSocket) {
                     thisWebSocket.send(JSON.stringify(sendObj));
                 }
             }
-        }, 50)
+        }, 500)
     }
 
     var createFenshen = function (newWebSocket, position) {

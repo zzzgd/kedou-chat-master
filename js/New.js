@@ -45,7 +45,7 @@ let vmLog = new Vue({
                     this.followInterval = setInterval(() => {
                         // console.log(this.followUser)
                         this.deliveryTo(this.followUser.user.x, this.followUser.user.y);
-                    }, 100);
+                    }, 500);
                 } else if (this.type === 'around') {
                     let degree = 0;
                     this.followInterval = setInterval(() => {
@@ -57,7 +57,7 @@ let vmLog = new Vue({
                         let x1 = x0 + Math.sin(hudu) * r;
                         let y1 = y0 - Math.cos(hudu) * r;
                         this.deliveryTo(x1, y1);
-                    }, 50)
+                    }, 500)
                 }
                 // console.log(this.followInterval)
             }
