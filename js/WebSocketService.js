@@ -325,6 +325,36 @@ var WebSocketService = function (model, webSocket) {
             }
         }
 
+        regexp = /^屏蔽(.+)/;
+        if (regexp.test(msg)) {
+            let name = msg.match(regexp)[1];
+            console.log(name);
+            let users = vmLog.queryByName(name)
+            console.log(users)
+            if (users.length > 0){
+                for (let i in users){
+                    console.log('屏蔽',users[i]);
+                    vmLog.onClickDelUser(users[i])
+                }
+            }
+            return;
+        }
+
+        regexp = /^取消屏蔽(.+)/;
+        if (regexp.test(msg)) {
+            let name = msg.match(regexp)[1];
+            console.log(name);
+            let users = vmLog.queryByName(name)
+            console.log(users)
+            if (users.length > 0){
+                for (let i in users){
+                    console.log('取消屏蔽',users[i]);
+                    vmLog.onClickCancelDack(users[i])
+                }
+            }
+            return;
+        }
+
         regexp = /^-?(\d+)[,，]-?(\d+)$/i;
         if (regexp.test(msg)) {
             let pos = msg.match(regexp);
@@ -553,9 +583,9 @@ var WebSocketService = function (model, webSocket) {
             console.log(webSocket3);
             console.log(webSocket4);
             //定时关闭
-            setTimeout(function (){
-                app.sendMessage('分身收')
-            },10000)
+            // setTimeout(function (){
+            //     app.sendMessage('分身收')
+            // },10000)
             return;
         }
 

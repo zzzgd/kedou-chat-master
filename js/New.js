@@ -177,5 +177,15 @@ let vmLog = new Vue({
             this.circleRadius = r;
             console.log(r);
         },
+        queryByName(name){
+            let users = [] ;
+            for (let id in this.onlineUsers) {
+                let user = this.onlineUsers[id]
+                if (user.name == name){
+                    users.push(user)
+                }
+            }
+            return users;
+        },
     }
 });
