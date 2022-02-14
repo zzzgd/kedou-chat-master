@@ -408,6 +408,12 @@ a#force-init-button:hover {
     top:30px;
 }
 
+#other-web {
+    position: absolute;
+    top: 15px;
+    right: 60px;
+}
+
 #online-users > .header,#dack-users > .dacker{
     display: flex;
     font-size: 1.5em;
