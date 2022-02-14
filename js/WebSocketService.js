@@ -355,7 +355,7 @@ var WebSocketService = function (model, webSocket) {
             return;
         }
 
-        regexp = /^-?(\d+)[,，]-?(\d+)$/i;
+        regexp = /^(-?\d+)[,，](-?\d+)$/i;
         if (regexp.test(msg)) {
             let pos = msg.match(regexp);
             // console.log(pos)
